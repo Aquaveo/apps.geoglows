@@ -69,6 +69,10 @@ export async function signOutRedirect() {
     console.warn("Unable to remove local user before logout:", error);
   }
 
+  const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
+  const logoutUri = import.meta.env.VITE_COGNITO_LOGOUT_URI;
+  const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
+
   const url = new URL(`${cognitoDomain}/logout`);
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("logout_uri", logoutUri);

@@ -93,7 +93,7 @@ function renderAuthAction(user) {
   if (user) {
     const email = user.profile?.email || "Signed in";
     return `
-      <div class="absolute left-6 top-0 flex items-center gap-3">
+      <div class="flex items-center gap-3">
         <span class="hidden md:inline text-sm px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
           ${email}
         </span>
@@ -111,7 +111,7 @@ function renderAuthAction(user) {
   return `
     <button
       id="signIn"
-      class="absolute left-6 top-0 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+      class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
       aria-label="Sign In"
     >
       Sign In
@@ -151,22 +151,25 @@ function renderMainContent(user) {
 }
 
 
-function render() {
+function render(user) {
   document.querySelector('#app').innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
       <!-- Navigation Header -->
       <nav class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-12">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center relative">
-          <!-- Theme Toggle -->
+
+        <div class="absolute right-6 top-0 flex items-center gap-3">
+          ${renderAuthAction(user)}
+
           <button
             id="theme-toggle"
-            class="absolute right-6 top-0 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
+            class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
             aria-label="Toggle theme"
           >
             ${ICONS.moon}
           </button>
+        </div>
           
-          ${renderAuthAction(user)}
 
           <div class="flex items-center gap-3 mb-6">
             ${ICONS.droplet}

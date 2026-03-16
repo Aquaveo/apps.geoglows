@@ -12,5 +12,8 @@
     "@tailwindcss/vite": "^4.1.18",
     "tailwindcss": "^4.1.18",
     "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "oidc-client-ts": "^3.5.0"
   }
 }

@@ -1,5 +1,13 @@
+// src/main.js
 import './style.css';
 import config from '../apps.json';
+import {
+  signInRedirect,
+  signOutRedirect,
+  completeSignInIfNeeded,
+  getCurrentUser,
+  clearStaleAuthState,
+} from "./auth.js";
 
 const { apps: TOOLS, contributors: CONTRIBUTORS, sponsors: SPONSORS } = config;
 const ICON_MODULES = import.meta.glob('./icons/*.svg', {
@@ -81,6 +89,68 @@ function createToolCard(tool) {
   `;
 }
 
+function renderAuthAction(user) {
+  if (user) {
+    const email = user.profile?.email || "Signed in";
+    return `
+      <div class="absolute left-6 top-0 flex items-center gap-3">
+        <span class="hidden md:inline text-sm px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+          ${email}
+        </span>
+        <button
+          id="signOut"
+          class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold transition-colors"
+          aria-label="Sign Out"
+        >
+          Log out
+        </button>
+      </div>
+    `;
+  }
+
+  return `
+    <button
+      id="signIn"
+      class="absolute left-6 top-0 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+      aria-label="Sign In"
+    >
+      Sign In
+    </button>
+  `;
+}
+
+function renderMainContent(user) {
+  if (!user) {
+    return `
+      <main class="max-w-4xl mx-auto px-6 py-16 grow flex items-center justify-center">
+        <div class="glass-card rounded-2xl p-10 text-center max-w-2xl">
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-4">
+            Sign in to access GEOGLOWS applications
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8">
+            This portal is protected with Amazon Cognito. Sign in to view and launch the available tools.
+          </p>
+          <button
+            id="signInMain"
+            class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+          >
+            Continue to sign in
+          </button>
+        </div>
+      </main>
+    `;
+  }
+
+  return `
+    <main class="max-w-7xl mx-auto px-6 py-10 grow">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        ${TOOLS.map(createToolCard).join("")}
+      </div>
+    </main>
+  `;
+}
+
+
 function render() {
   document.querySelector('#app').innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
@@ -95,6 +165,8 @@ function render() {
           >
             ${ICONS.moon}
           </button>
+          
+          ${renderAuthAction(user)}
 
           <div class="flex items-center gap-3 mb-6">
             ${ICONS.droplet}
@@ -157,9 +229,25 @@ function render() {
 
   // Set up theme toggle
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+  document.getElementById("signIn")?.addEventListener("click", signInRedirect);
+  document.getElementById("signInMain")?.addEventListener("click", signInRedirect);
+  document.getElementById("signOut")?.addEventListener("click", signOutRedirect);
   updateThemeIcon();
 }
 
 // Initialize theme before render to prevent flash
-initTheme();
-render();
+async function initApp() {
+  initTheme();
+  await clearStaleAuthState();
+
+  try {
+    await completeSignInIfNeeded();
+  } catch (error) {
+    console.error("Failed to complete sign-in callback:", error);
+  }
+
+  const user = await getCurrentUser();
+  render(user);
+}
+
+initApp();

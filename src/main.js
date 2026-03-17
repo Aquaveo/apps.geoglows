@@ -8,6 +8,7 @@ import {
   getCurrentUser,
   clearStaleAuthState,
 } from "./auth.js";
+import { inject } from "@vercel/analytics"
 
 const { apps: TOOLS, contributors: CONTRIBUTORS, sponsors: SPONSORS } = config;
 const ICON_MODULES = import.meta.glob('./icons/*.svg', {
@@ -254,3 +255,4 @@ async function initApp() {
 }
 
 initApp();
+inject();

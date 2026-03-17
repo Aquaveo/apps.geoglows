@@ -9,6 +9,7 @@ import {
   clearStaleAuthState,
 } from "./auth.js";
 import { inject } from "@vercel/analytics"
+import { injectSpeedInsights } from '@vercel/speed-insights';
 
 const { apps: TOOLS, contributors: CONTRIBUTORS, sponsors: SPONSORS } = config;
 const ICON_MODULES = import.meta.glob('./icons/*.svg', {
@@ -256,3 +257,4 @@ async function initApp() {
 
 initApp();
 inject();
+injectSpeedInsights();

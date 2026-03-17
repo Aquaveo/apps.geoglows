@@ -3,8 +3,8 @@ import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 
 const authority = import.meta.env.VITE_COGNITO_AUTHORITY;
 const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
-const redirectUri = import.meta.env.VITE_COGNITO_REDIRECT_URI || `${window.location.origin}/`;
-const logoutUri = import.meta.env.VITE_COGNITO_LOGOUT_URI || `${window.location.origin}/`;
+const redirectUri = import.meta.env.VITE_COGNITO_REDIRECT_URI;
+const logoutUri = import.meta.env.VITE_COGNITO_LOGOUT_URI;
 const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
 
 const scope = import.meta.env.VITE_COGNITO_SCOPE || "openid email profile";

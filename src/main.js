@@ -1,12 +1,14 @@
 // src/main.js
 import './style.css';
 import config from '../apps.json';
+import { ensureProfile } from "./profile.js";
 import {
   signInRedirect,
   signOutRedirect,
   completeSignInIfNeeded,
   getCurrentUser,
   clearStaleAuthState,
+  setupTokenRenewal
 } from "./auth.js";
 import { inject } from "@vercel/analytics"
 import { injectSpeedInsights } from '@vercel/speed-insights';
@@ -121,37 +123,6 @@ function renderAuthAction(user) {
   `;
 }
 
-function renderMainContent(user) {
-  if (!user) {
-    return `
-      <main class="max-w-4xl mx-auto px-6 py-16 grow flex items-center justify-center">
-        <div class="glass-card rounded-2xl p-10 text-center max-w-2xl">
-          <h2 class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-4">
-            Sign in to access GEOGLOWS applications
-          </h2>
-          <p class="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8">
-            This portal is protected with Amazon Cognito. Sign in to view and launch the available tools.
-          </p>
-          <button
-            id="signInMain"
-            class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
-          >
-            Continue to sign in
-          </button>
-        </div>
-      </main>
-    `;
-  }
-
-  return `
-    <main class="max-w-7xl mx-auto px-6 py-10 grow">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        ${TOOLS.map(createToolCard).join("")}
-      </div>
-    </main>
-  `;
-}
-
 
 function render(user) {
   document.querySelector('#app').innerHTML = `
@@ -243,6 +214,7 @@ function render(user) {
 // Initialize theme before render to prevent flash
 async function initApp() {
   initTheme();
+  setupTokenRenewal();  
   await clearStaleAuthState();
 
   try {
@@ -252,6 +224,15 @@ async function initApp() {
   }
 
   const user = await getCurrentUser();
+
+  if (user) {
+    try {
+      await ensureProfile();
+    } catch (error) {
+      console.error("Profile bootstrap failed:", error);
+    }
+  }
+
   render(user);
 }
 

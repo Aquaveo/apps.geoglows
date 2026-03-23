@@ -17,13 +17,33 @@ export const userManager = new UserManager({
   response_type: "code",
   scope,
 
-  // Persist signed-in user across refreshes/tabs
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 
-  // Cognito-specific recommendations from oidc-client-ts docs
+  // Keep this false for Cognito
   automaticSilentRenew: false,
   revokeTokenTypes: ["refresh_token"],
 });
+
+let renewalInFlight = null;
+
+async function renewTokens() {
+  if (renewalInFlight) return renewalInFlight;
+
+  renewalInFlight = (async () => {
+    try {
+      const renewedUser = await userManager.signinSilent();
+      return renewedUser;
+    } catch (error) {
+      console.error("Token renewal failed:", error);
+      await userManager.removeUser();
+      return null;
+    } finally {
+      renewalInFlight = null;
+    }
+  })();
+
+  return renewalInFlight;
+}
 
 export async function clearStaleAuthState() {
   try {
@@ -47,7 +67,6 @@ export async function completeSignInIfNeeded() {
 
   const user = await userManager.signinCallback();
 
-  // Clean up ?code=...&state=... from the URL
   const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
   window.history.replaceState({}, document.title, cleanUrl);
 
@@ -55,11 +74,49 @@ export async function completeSignInIfNeeded() {
 }
 
 export async function getCurrentUser() {
-  const user = await userManager.getUser();
-  if (!user || user.expired) {
+  let user = await userManager.getUser();
+
+  if (!user) {
     return null;
   }
+
+  // If already expired, try one refresh before giving up
+  if (user.expired) {
+    user = await renewTokens();
+    return user;
+  }
+
   return user;
+}
+
+export function setupTokenRenewal() {
+  userManager.events.addAccessTokenExpiring(async () => {
+    try {
+      await renewTokens();
+    } catch (error) {
+      console.error("Access token expiring renewal failed:", error);
+    }
+  });
+
+  userManager.events.addAccessTokenExpired(async () => {
+    try {
+      await renewTokens();
+    } catch (error) {
+      console.error("Access token expired renewal failed:", error);
+    }
+  });
+
+  userManager.events.addSilentRenewError(async (error) => {
+    console.error("Silent renew error:", error);
+  });
+
+  userManager.events.addUserSignedOut(async () => {
+    try {
+      await userManager.removeUser();
+    } catch (error) {
+      console.warn("Unable to remove signed-out user:", error);
+    }
+  });
 }
 
 export async function signOutRedirect() {
@@ -68,10 +125,6 @@ export async function signOutRedirect() {
   } catch (error) {
     console.warn("Unable to remove local user before logout:", error);
   }
-
-  const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
-  const logoutUri = import.meta.env.VITE_COGNITO_LOGOUT_URI;
-  const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
 
   const url = new URL(`${cognitoDomain}/logout`);
   url.searchParams.set("client_id", clientId);

@@ -1,4 +1,4 @@
-import { getUserDisplayInfo } from "@geoglows/auth/core";
+import { getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
 
 export function renderAuthAction(state) {
   const { user, account, status, action } = state;

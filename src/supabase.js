@@ -1,6 +1,6 @@
 // src/supabase.js
 
-import { createGeoglowsSupabaseClient } from "@geoglows/auth/core";
+import { createGeoglowsSupabaseClient } from "@aquaveo/geoglows-auth/core";
 import { auth } from "./auth.js";
 
 export const supabase = createGeoglowsSupabaseClient({

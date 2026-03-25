@@ -1,5 +1,5 @@
 import "./style.css";
-import { bootstrapSession } from "@geoglows/auth/core";
+import { bootstrapSession } from "@aquaveo/geoglows-auth/core";
 import { inject } from "@vercel/analytics";
 import { injectSpeedInsights } from "@vercel/speed-insights";
 

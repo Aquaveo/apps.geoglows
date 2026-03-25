@@ -1,6 +1,6 @@
 // src/profile.js
 
-import { ensureProfile as ensureGeoglowsProfile } from "@geoglows/auth/core";
+import { ensureProfile as ensureGeoglowsProfile } from "@aquaveo/geoglows-auth/core";
 import { supabase } from "./supabase.js";
 import { getCurrentUser } from "./auth.js";
 

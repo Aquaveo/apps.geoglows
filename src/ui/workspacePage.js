@@ -1,4 +1,4 @@
-import { getUserDisplayInfo } from "@geoglows/auth/core";
+import { getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
 import { ICONS } from "../icons.js";
 
 export function renderAccountPanel(state) {

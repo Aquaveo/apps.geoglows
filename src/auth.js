@@ -1,5 +1,5 @@
 // src/auth.js
-import { createOidcAuthAdapter } from "@geoglows/auth/core";
+import { createOidcAuthAdapter } from "@aquaveo/geoglows-auth/core";
 
 const auth = createOidcAuthAdapter({
   authority: import.meta.env.VITE_COGNITO_AUTHORITY,

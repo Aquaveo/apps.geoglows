@@ -2,7 +2,7 @@ import {
   loadAccountSummary as loadGeoglowsAccountSummary,
   createOrganization as createGeoglowsOrganization,
   setActiveOrgId,
-} from "@geoglows/auth/core";
+} from "@aquaveo/geoglows-auth/core";
 import { supabase } from "./supabase.js";
 import { getCurrentUser } from "./auth.js";
 

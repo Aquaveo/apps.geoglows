@@ -2,5 +2,8 @@
   "buildCommand": "npm run build:all",
   "outputDirectory": "dist",
   "framework": null,
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/api/regions", "destination": "/aquifer-analyst/data/regions.json" }
+  ]
 }

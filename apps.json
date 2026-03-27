@@ -1,6 +1,20 @@
 {
   "apps": [
     {
+      "id": "gwdm",
+      "type": "app",
+      "name": "Aquifer Analyst",
+      "description": "Map and analyze your groundwater well locations and observations locally and privately on your browser.",
+      "url": "",
+      "path": "/aquifer-analyst",
+      "repository": "geoglows/aquiferx",
+      "tags": ["Mapping", "Analytics", "In-situ Data"],
+      "iconClass": "text-indigo-400",
+      "iconName": "folded-map",
+      "disabled": false
+
+    },
+    {
       "id": "rfs",
       "type": "app",
       "name": "Hydroviewer RFS v2",
@@ -10,7 +24,8 @@
       "repository": "geoglows/rfs-v2-hydroviewer",
       "tags": ["Surface Water", "Forecasting", "Flood Prediction"],
       "iconClass": "text-blue-400",
-      "iconName": "waves"
+      "iconName": "waves",
+      "disabled": true
     },
     {
       "id": "ggst",
@@ -22,19 +37,8 @@
       "repository": "geoglows/grace-groundwater-dashboard",
       "tags": ["Groundwater", "Remote Sensing", "Gravity Data"],
       "iconClass": "text-cyan-400",
-      "iconName": "satellite"
-    },
-    {
-      "id": "gwdm",
-      "type": "app",
-      "name": "Aquifer Analyst",
-      "description": "Map and analyze your groundwater well locations and observations locally and privately on your browser.",
-      "url": "",
-      "path": "/aquifer-analyst",
-      "repository": "geoglows/aquiferx",
-      "tags": ["Mapping", "Analytics", "In-situ Data"],
-      "iconClass": "text-indigo-400",
-      "iconName": "folded-map"
+      "iconName": "satellite",
+      "disabled": true
     },
     {
       "id": "gwdm-legacy",
@@ -46,7 +50,8 @@
       "repository": "",
       "tags": ["Mapping", "Groundwater", "Legacy"],
       "iconClass": "text-indigo-400",
-      "iconName": "folded-map"
+      "iconName": "folded-map",
+      "disabled": true
     }
   ],
   "contributors": ["Brigham Young University"],

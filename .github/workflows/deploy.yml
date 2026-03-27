@@ -49,14 +49,33 @@ jobs:
           npm run build
 
       - name: Build apps
+        env:
+          # Shared Supabase vars
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          # AquiferX (id: gwdm) - prefix GWDM_
+          GWDM_VITE_OIDC_AUTHORITY: ${{ secrets.GWDM_VITE_OIDC_AUTHORITY }}
+          GWDM_VITE_OIDC_CLIENT_ID: ${{ secrets.GWDM_VITE_OIDC_CLIENT_ID }}
+          GWDM_VITE_OIDC_REDIRECT_URI: https://dev.apps.geoglows.org/aquifer-analyst/
+          GWDM_VITE_OIDC_LOGOUT_URI: https://dev.apps.geoglows.org/aquifer-analyst/
+          GWDM_VITE_COGNITO_DOMAIN: ${{ secrets.GWDM_VITE_COGNITO_DOMAIN }}
         run: |
           jq -c '.apps[] | select(.type == "app")' index/apps.json | while IFS= read -r app; do
             id=$(echo "$app" | jq -r '.id')
             path=$(echo "$app" | jq -r '.path')
+            prefix=$(echo "$id" | tr '[:lower:]-' '[:upper:]_')
             echo "Building $id with base=$path/"
             cd "$id"
             npm install
-            npx vite build --base="$path/"
+            # Inject app-specific VITE_ vars (strip the app prefix)
+            env_args=""
+            while IFS='=' read -r key val; do
+              if [[ "$key" == "${prefix}_VITE_"* ]]; then
+                stripped="${key#${prefix}_}"
+                env_args="$env_args $stripped=$(printf '%q' "$val")"
+              fi
+            done < <(env)
+            eval "env $env_args npx vite build --base=\"$path/\""
             cd ..
           done
 

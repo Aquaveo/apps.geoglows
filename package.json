@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:all": "vite build && node scripts/build-apps.js",
     "preview": "vite preview"
   },
   "devDependencies": {
@@ -14,7 +15,7 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "@aquaveo/geoglows-auth": "^0.1.0",
+    "@aquaveo/geoglows-auth": "^0.1.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "oidc-client-ts": "^3.5.0"

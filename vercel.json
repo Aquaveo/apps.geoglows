@@ -1,9 +1,9 @@
 {
-  "buildCommand": "npm run build:all",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": null,
   "installCommand": "npm install",
   "rewrites": [
-    { "source": "/api/regions", "destination": "/aquifer-analyst/data/regions.json" }
+    { "source": "/aquifer-analyst/:path*", "destination": "https://aquiferx.vercel.app/:path*" }
   ]
 }

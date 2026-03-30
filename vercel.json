@@ -4,6 +4,6 @@
   "framework": null,
   "installCommand": "npm install",
   "rewrites": [
-    { "source": "/aquifer-analyst/:path*", "destination": "https://aquiferx.vercel.app/:path*" }
+    { "source": "/aquifer-analyst/:path*", "destination": "https://aquiferx-bay.vercel.app/:path*" }
   ]
 }

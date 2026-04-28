@@ -12,6 +12,7 @@ import { renderAuthAction } from "./ui/navbar.js";
 import { renderAppsPage } from "./ui/appsPage.js";
 import { renderWorkspacePage } from "./ui/workspacePage.js";
 import { renderFooter } from "./ui/footer.js";
+import { mountSignInModal } from "./ui/signInModal.js";
 
 const appState = {
   status: "bootstrapping",
@@ -83,19 +84,42 @@ function renderApp() {
   updateThemeIcon();
 }
 
-async function initApp() {
-  initTheme();
-  renderApp();
-
-  window.addEventListener("hashchange", () => {
-    setState({ currentPage: window.location.hash === "#workspace" ? "workspace" : "apps" });
-  });
-
+async function runBootstrap() {
   await bootstrapSession({
     auth,
     supabase,
     onStateChange: setState,
   });
+}
+
+async function initApp() {
+  initTheme();
+  renderApp();
+  mountSignInModal();
+
+  window.addEventListener("hashchange", () => {
+    setState({ currentPage: window.location.hash === "#workspace" ? "workspace" : "apps" });
+  });
+
+  // Re-run bootstrap on Supabase auth state changes so the inline modal
+  // (or any external sign-out) can propagate into appState without a page
+  // reload. SIGNED_IN fires after password sign-in; SIGNED_OUT after
+  // sign-out; INITIAL_SESSION fires on every load (handled by the initial
+  // runBootstrap below, so we ignore it here to avoid a double-bootstrap).
+  let initialSessionSeen = false;
+  supabase.auth.onAuthStateChange((event) => {
+    if (event === "INITIAL_SESSION" && !initialSessionSeen) {
+      initialSessionSeen = true;
+      return;
+    }
+    if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+      runBootstrap().catch((error) => {
+        console.error("Bootstrap after auth state change failed:", error?.message ?? error);
+      });
+    }
+  });
+
+  await runBootstrap();
 }
 
 initApp();

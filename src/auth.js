@@ -1,21 +1,25 @@
 // src/auth.js
-import { createOidcAuthAdapter } from "@aquaveo/geoglows-auth/core";
+//
+// Supabase Auth adapter (replaces the prior Cognito/OIDC adapter as of v0.2.0
+// of @aquaveo/geoglows-auth). The Supabase client is shared with the data
+// layer in src/supabase.js — same client serves both auth and queries.
 
-const auth = createOidcAuthAdapter({
-  authority: import.meta.env.VITE_COGNITO_AUTHORITY,
-  clientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
-  redirectUri: import.meta.env.VITE_COGNITO_REDIRECT_URI,
-  logoutUri: import.meta.env.VITE_COGNITO_LOGOUT_URI,
-  cognitoDomain: import.meta.env.VITE_COGNITO_DOMAIN,
-  scope: import.meta.env.VITE_COGNITO_SCOPE || "openid email profile",
+import { createSupabaseAuthAdapter } from "@aquaveo/geoglows-auth/core";
+import { supabase } from "./supabase.js";
+
+const auth = createSupabaseAuthAdapter({
+  supabase,
+  defaultRedirectTo: window.location.origin,
+  logoutRedirectTo: window.location.origin,
 });
+
+// Custom event signalling to the sign-in modal that the user pressed the
+// "Sign in" button somewhere in the app. Decoupled from any specific
+// renderer so the navbar (or any other surface) can dispatch it.
+export const SIGN_IN_REQUESTED_EVENT = "geoglows:sign-in-requested";
 
 export async function clearStaleAuthState() {
   return auth.clearStaleAuthState();
-}
-
-export async function signInRedirect() {
-  return auth.signInRedirect();
 }
 
 export async function completeSignInIfNeeded() {
@@ -30,8 +34,29 @@ export function setupTokenRenewal() {
   auth.setupTokenRenewal?.();
 }
 
+// Replaces the old hosted-UI redirect. Now opens the inline sign-in modal
+// by dispatching a window-level event; the modal subscribes to it and
+// shows itself. Kept under the same name so existing call sites
+// (src/events.js) don't need to change.
+export async function signInRedirect() {
+  window.dispatchEvent(new CustomEvent(SIGN_IN_REQUESTED_EVENT));
+}
+
 export async function signOutRedirect() {
   return auth.signOutRedirect();
+}
+
+// Headless Supabase Auth methods exposed for the inline sign-in modal.
+export async function signInWithPassword(args) {
+  return auth.signInWithPassword(args);
+}
+
+export async function signInWithMagicLink(args) {
+  return auth.signInWithMagicLink(args);
+}
+
+export async function signInWithOAuth(args) {
+  return auth.signInWithOAuth(args);
 }
 
 export { auth };

@@ -14,9 +14,8 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "@aquaveo/geoglows-auth": "^0.1.2",
+    "@aquaveo/geoglows-auth": "^0.2.0",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "oidc-client-ts": "^3.5.0"
+    "@vercel/speed-insights": "^2.0.0"
   }
 }

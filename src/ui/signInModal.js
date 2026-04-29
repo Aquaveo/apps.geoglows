@@ -30,8 +30,12 @@ const GENERIC_OAUTH_ERROR =
 export function mountSignInModal() {
   const dialog = document.createElement("dialog");
   dialog.id = "signInModal";
+  // Centering: native <dialog>:modal UA styles place the element via
+  // position:fixed; inset:0; margin:auto — but Tailwind's preflight
+  // and our own w-* classes can interfere. Explicit translate-based
+  // centering is robust regardless of UA / preflight quirks.
   dialog.className =
-    "rounded-2xl p-0 backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm w-full max-w-md bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 shadow-2xl";
+    "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 w-[calc(100vw-2rem)] max-w-md max-h-[90vh] overflow-y-auto rounded-2xl p-0 backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 shadow-2xl";
   dialog.innerHTML = renderModalBody({ mode: "signIn", error: null, pending: false });
   document.body.appendChild(dialog);
 

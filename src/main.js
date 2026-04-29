@@ -101,25 +101,59 @@ async function initApp() {
     setState({ currentPage: window.location.hash === "#workspace" ? "workspace" : "apps" });
   });
 
-  // Re-run bootstrap on Supabase auth state changes so the inline modal
-  // (or any external sign-out) can propagate into appState without a page
-  // reload. SIGNED_IN fires after password sign-in; SIGNED_OUT after
-  // sign-out; INITIAL_SESSION fires on every load (handled by the initial
-  // runBootstrap below, so we ignore it here to avoid a double-bootstrap).
-  let initialSessionSeen = false;
+  // Bootstrap is driven by Supabase's onAuthStateChange. INITIAL_SESSION
+  // fires after Supabase JS finishes detectSessionInUrl — this is the only
+  // safe moment to call getSession() and have it reflect any OAuth tokens
+  // that arrived in the URL hash. SIGNED_IN / SIGNED_OUT fire on later
+  // changes (inline modal sign-in, sign-out from anywhere).
+  let initialBootstrapDone = false;
+
+  function bootstrapSafe(reason) {
+    runBootstrap().catch((error) => {
+      console.error(
+        `Bootstrap after ${reason} failed:`,
+        error instanceof Error ? error.message : error,
+      );
+    });
+  }
+
   supabase.auth.onAuthStateChange((event) => {
-    if (event === "INITIAL_SESSION" && !initialSessionSeen) {
-      initialSessionSeen = true;
+    if (event === "INITIAL_SESSION" && !initialBootstrapDone) {
+      initialBootstrapDone = true;
+      bootstrapSafe("INITIAL_SESSION");
+
+      // Strip OAuth callback artifacts so a reload doesn't replay the flow.
+      // Supabase's implicit OAuth callback returns tokens in the hash;
+      // PKCE returns ?code=&state= in the query. Clean both.
+      const hashHasAuth = /(?:^|[#&])access_token=/.test(window.location.hash);
+      const search = new URLSearchParams(window.location.search);
+      const queryHasAuth = search.has("code") && search.has("state");
+      if (hashHasAuth || queryHasAuth) {
+        if (queryHasAuth) {
+          search.delete("code");
+          search.delete("state");
+        }
+        const cleanedSearch = search.toString();
+        const newUrl =
+          window.location.pathname + (cleanedSearch ? `?${cleanedSearch}` : "");
+        history.replaceState({}, document.title, newUrl);
+      }
       return;
     }
     if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-      runBootstrap().catch((error) => {
-        console.error("Bootstrap after auth state change failed:", error?.message ?? error);
-      });
+      bootstrapSafe(event);
     }
   });
 
-  await runBootstrap();
+  // Safety net: if INITIAL_SESSION never fires within 2s (unlikely with
+  // detectSessionInUrl: true on by default), bootstrap anyway so the UI
+  // never gets stuck on the "Signing in..." placeholder.
+  setTimeout(() => {
+    if (!initialBootstrapDone) {
+      initialBootstrapDone = true;
+      bootstrapSafe("timeout-fallback");
+    }
+  }, 2000);
 }
 
 initApp();

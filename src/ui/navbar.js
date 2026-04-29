@@ -1,4 +1,5 @@
 import { getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
+import { escape } from "./escape.js";
 
 export function renderAuthAction(state) {
   const { user, account, status, action } = state;
@@ -34,12 +35,12 @@ export function renderAuthAction(state) {
   return `
     <details class="relative">
       <summary class="list-none cursor-pointer w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-white text-sm font-bold flex items-center justify-center select-none hover:opacity-90 transition-opacity">
-        ${initials}
+        ${escape(initials)}
       </summary>
       <div class="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden z-50">
         <div class="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
-          <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${name}</p>
-          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${email}</p>
+          <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">${escape(name)}</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${escape(email)}</p>
         </div>
         <a
           href="#profile"

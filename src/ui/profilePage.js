@@ -1,6 +1,7 @@
 import { getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
 import { ICONS } from "../icons.js";
 import { isProfileComplete } from "../account.js";
+import { escape } from "./escape.js";
 
 const USER_TYPE_OPTIONS = [
   { value: "researcher", label: "Researcher" },
@@ -15,26 +16,20 @@ const USER_TYPE_LABELS = Object.fromEntries(
   USER_TYPE_OPTIONS.map((o) => [o.value, o.label]),
 );
 
-function escape(value) {
-  if (value == null) return "";
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
+function fieldRow(label, displayHtml) {
+  return `
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">${escape(label)}</p>
+      <p class="mt-1 text-sm">${displayHtml}</p>
+    </div>
+  `;
 }
 
 function field(label, value, opts = {}) {
   const display = value
-    ? `<span class="${opts.linkClass ?? "text-slate-800 dark:text-slate-200"}">${escape(value)}</span>`
+    ? `<span class="text-slate-800 dark:text-slate-200">${escape(value)}</span>`
     : `<span class="italic text-slate-400 dark:text-slate-500">${escape(opts.empty ?? "Not provided")}</span>`;
-  return `
-    <div>
-      <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">${escape(label)}</p>
-      <p class="mt-1 text-sm">${display}</p>
-    </div>
-  `;
+  return fieldRow(label, display);
 }
 
 function renderCompletionBanner(state) {
@@ -70,9 +65,12 @@ function renderViewMode(state) {
     ? USER_TYPE_LABELS[profile.user_type] ?? profile.user_type
     : null;
 
-  const userLink = profile?.user_link
-    ? `<a href="${escape(profile.user_link)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${escape(profile.user_link)}</a>`
-    : null;
+  const userLinkRow = profile?.user_link
+    ? fieldRow(
+        "Personal link",
+        `<a href="${escape(profile.user_link)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${escape(profile.user_link)}</a>`,
+      )
+    : field("Personal link", null, { empty: "—" });
 
   return `
     <div class="glass-card rounded-3xl p-6 md:p-8 shadow-sm">
@@ -99,7 +97,7 @@ function renderViewMode(state) {
         ${field("Last name", profile?.last_name)}
         ${field("Phone number", profile?.phone_number, { empty: "—" })}
         ${field("User type", userTypeLabel, { empty: "—" })}
-        ${field("Personal link", userLink, { empty: "—" })}
+        ${userLinkRow}
       </div>
 
       <div class="mt-5">

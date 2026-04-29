@@ -92,7 +92,6 @@ export function bindWorkspaceEvents(setState) {
           account,
           action: null,
           profileEditing: false,
-          profileBannerDismissed: false,
         });
       } catch (error) {
         console.error("Profile update failed:", error);

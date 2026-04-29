@@ -10,9 +10,16 @@ import { bindWorkspaceEvents } from "./events.js";
 import { ICONS } from "./icons.js";
 import { renderAuthAction } from "./ui/navbar.js";
 import { renderAppsPage } from "./ui/appsPage.js";
-import { renderWorkspacePage } from "./ui/workspacePage.js";
+import { renderProfilePage } from "./ui/profilePage.js";
 import { renderFooter } from "./ui/footer.js";
 import { mountSignInModal } from "./ui/signInModal.js";
+
+function pageFromHash(hash) {
+  // Accept the legacy #workspace anchor as a synonym for #profile so
+  // bookmarks from the previous Cognito-era app keep working.
+  if (hash === "#profile" || hash === "#workspace") return "profile";
+  return "apps";
+}
 
 const appState = {
   status: "bootstrapping",
@@ -20,7 +27,9 @@ const appState = {
   account: null,
   error: null,
   action: null,
-  currentPage: window.location.hash === "#workspace" ? "workspace" : "apps",
+  currentPage: pageFromHash(window.location.hash),
+  profileEditing: false,
+  profileBannerDismissed: false,
 };
 
 function setState(patch) {
@@ -29,7 +38,7 @@ function setState(patch) {
 }
 
 function render(state) {
-  const isApps = state.currentPage !== "workspace";
+  const isApps = state.currentPage !== "profile";
 
   document.querySelector("#app").innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
@@ -68,7 +77,7 @@ function render(state) {
       </nav>
 
       <main class="max-w-7xl mx-auto px-6 py-10 grow w-full">
-        ${isApps ? renderAppsPage() : renderWorkspacePage(state)}
+        ${isApps ? renderAppsPage() : renderProfilePage(state)}
       </main>
 
       ${renderFooter()}
@@ -98,7 +107,7 @@ async function initApp() {
   mountSignInModal();
 
   window.addEventListener("hashchange", () => {
-    setState({ currentPage: window.location.hash === "#workspace" ? "workspace" : "apps" });
+    setState({ currentPage: pageFromHash(window.location.hash) });
   });
 
   // Bootstrap is driven by Supabase's onAuthStateChange. INITIAL_SESSION

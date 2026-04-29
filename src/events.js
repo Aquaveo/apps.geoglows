@@ -1,11 +1,15 @@
-import { auth } from "./auth.js";
+import { signInRedirect, signOutRedirect } from "./auth.js";
 import { loadAccountSummary, createOrganization, selectActiveOrg } from "./account.js";
 import { toggleTheme } from "./theme.js";
 
 export function bindWorkspaceEvents(setState) {
   document.getElementById("signIn")?.addEventListener("click", async () => {
     try {
-      await auth.signInRedirect();
+      // The wrapper from auth.js dispatches the geoglows:sign-in-requested
+      // event the inline modal listens for. The raw adapter's
+      // signInRedirect is a no-op in Supabase-Auth mode, so we must NOT
+      // call auth.signInRedirect() directly.
+      await signInRedirect();
     } catch (error) {
       console.error("Sign in failed:", error);
       setState({ error });
@@ -15,7 +19,7 @@ export function bindWorkspaceEvents(setState) {
   document.getElementById("signOut")?.addEventListener("click", async () => {
     setState({ action: "signing_out" });
     try {
-      await auth.signOutRedirect();
+      await signOutRedirect();
     } catch (error) {
       console.error("Sign out failed:", error);
       setState({ action: null, error });

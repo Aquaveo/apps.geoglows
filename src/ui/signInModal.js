@@ -72,28 +72,54 @@ export function mountSignInModal() {
   async function handlePasswordSubmit(form) {
     const email = form.elements.email.value.trim();
     const password = form.elements.password.value;
+    const isSignUp = modalState.mode === "signUp";
+    const firstName = isSignUp
+      ? (form.elements.first_name?.value ?? "").trim()
+      : "";
+    const lastName = isSignUp
+      ? (form.elements.last_name?.value ?? "").trim()
+      : "";
 
+    if (isSignUp && !firstName) {
+      setModalState({ error: "Please enter your first name." });
+      return;
+    }
+    if (isSignUp && !lastName) {
+      setModalState({ error: "Please enter your last name." });
+      return;
+    }
     if (!email) {
       setModalState({ error: "Please enter your email address." });
       return;
     }
     if (!password.trim()) {
       setModalState({
-        error:
-          modalState.mode === "signUp"
-            ? "Please choose a password."
-            : "Please enter your password.",
+        error: isSignUp
+          ? "Please choose a password."
+          : "Please enter your password.",
       });
       return;
     }
 
     setModalState({ pending: true, error: null });
     try {
-      if (modalState.mode === "signUp") {
+      if (isSignUp) {
+        // Pass first_name / last_name through user_metadata so they end
+        // up on the auth.users row. The library's ensureProfile picks
+        // them up from user_metadata.full_name (composed below) when
+        // the profile row is created on first sign-in.
+        const fullName = [firstName, lastName].filter(Boolean).join(" ");
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin },
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+              full_name: fullName,
+            },
+          },
         });
         if (error) throw error;
         // signUp may or may not return a session depending on email
@@ -256,6 +282,38 @@ function renderModalBody({ mode, error, pending }) {
       </div>
 
       <form id="signInPasswordForm" novalidate class="space-y-3">
+        ${
+          isSignUp
+            ? `
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="signUpFirstName" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">First name</label>
+            <input
+              id="signUpFirstName"
+              name="first_name"
+              type="text"
+              autocomplete="given-name"
+              ${pending ? "disabled" : ""}
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label for="signUpLastName" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Last name</label>
+            <input
+              id="signUpLastName"
+              name="last_name"
+              type="text"
+              autocomplete="family-name"
+              ${pending ? "disabled" : ""}
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+        </div>
+        `
+            : ""
+        }
         <div>
           <label for="signInEmail" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Email</label>
           <input

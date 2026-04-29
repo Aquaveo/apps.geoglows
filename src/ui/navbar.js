@@ -42,10 +42,10 @@ export function renderAuthAction(state) {
           <p class="text-xs text-slate-500 dark:text-slate-400 truncate">${email}</p>
         </div>
         <a
-          href="#workspace"
+          href="#profile"
           class="flex items-center px-4 py-3 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
-          Workspace
+          Profile
         </a>
         <div class="border-t border-slate-100 dark:border-slate-800"></div>
         <button

@@ -49,3 +49,45 @@ export function getInitialState(appState) {
     error: null,
   };
 }
+
+/**
+ * Synchronously detects recovery-related URL state at module-load time,
+ * BEFORE Supabase JS consumes the hash via detectSessionInUrl. Returns
+ * one of:
+ *   - { kind: "expired" }          — token already used / past TTL
+ *   - { kind: "pkce-unsupported" } — PKCE recovery URL on an implicit-flow project
+ *   - { kind: "none" }             — neither (incl. valid implicit-flow recovery)
+ *
+ * The valid-implicit-flow recovery case (`#access_token=…&type=recovery`)
+ * returns "none" — it's handled by Supabase JS, which fires PASSWORD_RECOVERY
+ * via the onAuthStateChange listener. detectRecoveryUrlState catches the
+ * cases where no event will fire so the consumer can surface a clean error
+ * to the user instead of leaving them stranded on a normal signed-out page.
+ *
+ * @param {{ hash?: string, search?: string }} url
+ */
+export function detectRecoveryUrlState(url) {
+  const hash = url?.hash ?? "";
+  const search = url?.search ?? "";
+
+  // Expired token takes precedence — the URL signals failure regardless of flow.
+  if (/(?:^|[#&?])error_code=otp_expired/.test(hash)) {
+    return { kind: "expired" };
+  }
+  if (/(?:^|[?&])error_code=otp_expired/.test(search)) {
+    return { kind: "expired" };
+  }
+
+  // PKCE recovery: a `?code=` (or `#code=`) AND `type=recovery` in the same
+  // string. Implicit flow recovery uses `#access_token=`, NOT `code=`, so the
+  // code+recovery combination uniquely identifies the unsupported-flow case.
+  const hasCode = /(?:^|[#&?])code=/.test(hash) || /(?:^|[?&])code=/.test(search);
+  const hasRecovery =
+    /(?:^|[#&?])type=recovery/.test(hash) ||
+    /(?:^|[?&])type=recovery/.test(search);
+  if (hasCode && hasRecovery) {
+    return { kind: "pkce-unsupported" };
+  }
+
+  return { kind: "none" };
+}

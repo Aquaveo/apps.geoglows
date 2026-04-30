@@ -12,7 +12,11 @@ import { auth, SIGN_IN_REQUESTED_EVENT } from "./auth.js";
 import { supabase } from "./supabase.js";
 import { initTheme, updateThemeIcon } from "./theme.js";
 import { bindWorkspaceEvents } from "./events.js";
-import { getInitialState, isRedundantSignIn } from "./auth-events.js";
+import {
+  detectRecoveryUrlState,
+  getInitialState,
+  isRedundantSignIn,
+} from "./auth-events.js";
 import { ICONS } from "./icons.js";
 import { renderAppsPage } from "./ui/appsPage.js";
 import { renderProfilePage } from "./ui/profilePage.js";
@@ -123,6 +127,26 @@ async function initApp() {
   const signInModal = mountSignInModal({ authAdapter: auth });
   window.addEventListener(SIGN_IN_REQUESTED_EVENT, () => signInModal.open());
 
+  // Recovery URL detection — runs synchronously BEFORE Supabase JS consumes
+  // the hash. If the URL signals expired-token or PKCE (unsupported in v1),
+  // open the modal in the recoveryError view so the user sees a clean error
+  // instead of silent failure. See docs/plans/2026-04-30-002-feat-forgot-
+  // password-flow-plan.md (Q1 + PKCE detector).
+  const recoveryUrl = detectRecoveryUrlState({
+    hash: window.location.hash,
+    search: window.location.search,
+  });
+  if (recoveryUrl.kind === "pkce-unsupported") {
+    console.error(
+      "PKCE recovery flow is not supported in @aquaveo/geoglows-auth 1.2.x. " +
+        "If your Supabase project has been migrated to PKCE, the recovery " +
+        "URL template needs to use the implicit flow.",
+    );
+    signInModal.open({ view: "recoveryError" });
+  } else if (recoveryUrl.kind === "expired") {
+    signInModal.open({ view: "recoveryError" });
+  }
+
   window.addEventListener("hashchange", () => {
     setState({ currentPage: pageFromHash(window.location.hash) });
   });
@@ -178,6 +202,14 @@ async function initApp() {
       // flicker. See `src/auth-events.js`.
       if (isRedundantSignIn(event, session, appState.user)) return;
       bootstrapSafe("SIGNED_IN");
+    }
+    if (event === "PASSWORD_RECOVERY") {
+      // Supabase fires this once during _initialize() when the URL hash
+      // carries `#type=recovery`. Open the modal in setNewPassword view
+      // so the user can set a new password. The modal handles the
+      // updateUserPassword + signOutOtherSessions sequence and fires
+      // SIGNED_IN on success (which the dedup above will catch).
+      signInModal.open({ view: "setNewPassword" });
     }
   });
 

@@ -31,7 +31,7 @@
       "tags": ["Groundwater", "Remote Sensing", "Gravity Data"],
       "iconClass": "text-cyan-400",
       "iconName": "satellite",
-      "disabled": true
+      "disabled": false
     },
     {
       "id": "gwdm-legacy",

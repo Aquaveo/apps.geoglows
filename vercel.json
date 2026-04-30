@@ -6,6 +6,9 @@
   "rewrites": [
     { "source": "/aquifer-analyst", "destination": "https://aquiferx-bay.vercel.app/" },
     { "source": "/aquifer-analyst/", "destination": "https://aquiferx-bay.vercel.app/" },
-    { "source": "/aquifer-analyst/:path+", "destination": "https://aquiferx-bay.vercel.app/:path+" }
+    { "source": "/aquifer-analyst/:path+", "destination": "https://aquiferx-bay.vercel.app/:path+" },
+    { "source": "/grace-groundwater", "destination": "https://grace-groundwater-dashboard.vercel.app/" },
+    { "source": "/grace-groundwater/", "destination": "https://grace-groundwater-dashboard.vercel.app/" },
+    { "source": "/grace-groundwater/:path+", "destination": "https://grace-groundwater-dashboard.vercel.app/:path+" }
   ]
 }

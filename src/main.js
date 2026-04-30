@@ -12,6 +12,7 @@ import { auth, SIGN_IN_REQUESTED_EVENT } from "./auth.js";
 import { supabase } from "./supabase.js";
 import { initTheme, updateThemeIcon } from "./theme.js";
 import { bindWorkspaceEvents } from "./events.js";
+import { getInitialState, isRedundantSignIn } from "./auth-events.js";
 import { ICONS } from "./icons.js";
 import { renderAppsPage } from "./ui/appsPage.js";
 import { renderProfilePage } from "./ui/profilePage.js";
@@ -100,6 +101,12 @@ async function runBootstrap() {
   await bootstrapSession({
     auth,
     supabase,
+    // initialState carries the previous user/account through the
+    // transient bootstrapping/loading_profile/loading_account phases on
+    // rebootstrap (e.g. tab-focus revalidation), avoiding the avatar →
+    // "Signing in…" flicker. Returns null on first bootstrap when
+    // appState.user is null, which is the desired default behavior.
+    initialState: getInitialState(appState),
     onStateChange: setState,
   });
 }
@@ -136,7 +143,7 @@ async function initApp() {
     });
   }
 
-  supabase.auth.onAuthStateChange((event) => {
+  supabase.auth.onAuthStateChange((event, session) => {
     if (event === "INITIAL_SESSION" && !initialBootstrapDone) {
       initialBootstrapDone = true;
       bootstrapSafe("INITIAL_SESSION");
@@ -159,8 +166,18 @@ async function initApp() {
       }
       return;
     }
-    if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-      bootstrapSafe(event);
+    if (event === "SIGNED_OUT") {
+      bootstrapSafe("SIGNED_OUT");
+      return;
+    }
+    if (event === "SIGNED_IN") {
+      // Supabase JS fires SIGNED_IN on every visibility-change session
+      // revalidation (GoTrueClient.js _recoverAndRefresh). If it's the
+      // same user we already have, skip the rebootstrap — saves a
+      // network round trip and (defensively) avoids the avatar
+      // flicker. See `src/auth-events.js`.
+      if (isRedundantSignIn(event, session, appState.user)) return;
+      bootstrapSafe("SIGNED_IN");
     }
   });
 

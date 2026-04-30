@@ -20,7 +20,7 @@
       "tags": ["Surface Water", "Forecasting", "Flood Prediction"],
       "iconClass": "text-blue-400",
       "iconName": "waves",
-      "disabled": true
+      "disabled": false
     },
     {
       "id": "ggst",

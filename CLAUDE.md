@@ -5,6 +5,7 @@
 - Single-page app: navbar, app catalog (`appsPage`), per-user profile (`profilePage`), inline sign-in modal
 - Authenticates against Supabase Auth via `@aquaveo/geoglows-auth/core` (no React in this app — it consumes the lib's vanilla `core` surface, not `react`)
 - Hosted on Vercel (production + preview deploys per branch); GitHub Actions / Vercel CI
+- **Hosts the portal**: portal sub-apps are catalogued in `apps.json` (user-facing card metadata) and proxied via `vercel.json` rewrites (three rules per app: bare path, trailing slash, `:path+` wildcard). Currently integrated: `aquifer-analyst` → aquiferx, `grace-groundwater` → grace-groundwater-dashboard. Cross-app SSO is automatic via the shared Supabase project + same origin (rewritten paths)
 
 ## Architecture
 - **State machine**: `src/main.js` owns a single `appState` object; `setState(patch)` re-renders the whole tree by re-assigning `#app.innerHTML`. No virtual DOM, no reconciliation — every re-render rebuilds. Event handlers re-bind on every render via `bindWorkspaceEvents`

@@ -1,7 +1,6 @@
-import { getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
+import { escape, getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
 import { ICONS } from "../icons.js";
 import { isProfileComplete } from "../account.js";
-import { escape } from "./escape.js";
 
 const USER_TYPE_OPTIONS = [
   { value: "researcher", label: "Researcher" },

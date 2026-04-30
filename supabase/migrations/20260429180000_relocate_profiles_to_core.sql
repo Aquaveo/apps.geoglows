@@ -41,7 +41,7 @@ lock table public.profiles in access exclusive mode;
 -- 1. Create the `core` schema
 -- ---------------------------------------------------------------------------
 create schema if not exists core;
-grant usage on schema core to authenticated;
+grant usage on schema core to authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- 2. Move the user_type enum into `core`
@@ -82,12 +82,16 @@ select
 from public.profiles;
 
 -- ---------------------------------------------------------------------------
--- 5. Grants on core.profiles (no DELETE — see plan §Decisions)
+-- 5. Grants on core.profiles
 -- ---------------------------------------------------------------------------
--- DELETE intentionally omitted: matches existing public.profiles behavior
--- (no DELETE policy ever existed). Account deletion goes through
--- supabase.auth.admin.deleteUser(), not the profiles table.
+-- `authenticated` gets only SELECT/INSERT/UPDATE — DELETE intentionally omitted
+-- to match existing public.profiles behavior (no DELETE policy ever existed;
+-- account deletion goes through supabase.auth.admin.deleteUser, not this table).
+-- `service_role` gets ALL — admin role bypasses RLS by design and is the path
+-- for any future cleanup / batch ops on profiles. Mirrors Supabase's standard
+-- public-schema grant pattern for service_role.
 grant select, insert, update on core.profiles to authenticated;
+grant all on core.profiles to service_role;
 
 -- ---------------------------------------------------------------------------
 -- 6. RLS on core.profiles
@@ -147,5 +151,6 @@ create view public.profiles
      from core.profiles;
 
 grant select, insert, update on public.profiles to authenticated;
+grant all on public.profiles to service_role;
 
 commit;

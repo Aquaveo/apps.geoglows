@@ -1,8 +1,9 @@
 ---
 title: "feat: Add grace-groundwater-dashboard to the GEOGloWS portal (lib-extraction approach)"
 type: feat
-status: active
+status: complete
 date: 2026-04-30
+completed: 2026-04-30
 deepened: 2026-04-30
 ---
 
@@ -224,7 +225,7 @@ Everything else is modifications to existing files.
 
 ### Phase A — Library extraction (geoglows-auth)
 
-- [ ] **Unit A1: Extract sign-in modal + auth action + escape helper into `geoglows-auth/src/core`**
+- [x] **Unit A1: Extract sign-in modal + auth action + escape helper into `geoglows-auth/src/core`**
 
 **Goal:** A reusable vanilla sign-in surface lives in `@aquaveo/geoglows-auth/core` so any consumer (apps.geoglows, grace, future rfs-v2-hydroviewer) imports it instead of porting hundreds of lines of HTML/CSS.
 
@@ -273,7 +274,7 @@ Everything else is modifications to existing files.
 
 ---
 
-- [ ] **Unit A2: Refactor `apps.geoglows` to consume the lib's new sign-in surface**
+- [x] **Unit A2: Refactor `apps.geoglows` to consume the lib's new sign-in surface**
 
 **Goal:** apps.geoglows replaces local copies of signInModal.js and escape.js with imports from `@aquaveo/geoglows-auth/core`. No user-visible behavior change.
 
@@ -310,7 +311,9 @@ Everything else is modifications to existing files.
 
 ---
 
-- [ ] **Unit A3: Publish `@aquaveo/geoglows-auth@1.1.0` and merge apps.geoglows refactor**
+- [x] **Unit A3: Publish `@aquaveo/geoglows-auth@1.1.0` and merge apps.geoglows refactor**
+
+  Note: actual published version is `1.1.1`. 1.1.0 was published in error without a build, then unpublished; npm reserves unpublished version numbers permanently, so the bump to 1.1.1 carries the original 1.1.0 content. See `geoglows-auth/CHANGELOG.md` 1.1.1 entry.
 
 **Goal:** Lib release is on npm; apps.geoglows is on the new version in production.
 
@@ -344,7 +347,7 @@ Everything else is modifications to existing files.
 
 ### Phase B — Grace integration
 
-- [ ] **Unit B1: Grace Vite + Vercel build config**
+- [x] **Unit B1: Grace Vite + Vercel build config**
 
 **Goal:** Grace's build emits asset URLs that resolve correctly under three deployment contexts (production at `/grace-groundwater/`, Vercel preview at root, local dev at root). Vercel installs grace's deps successfully.
 
@@ -378,7 +381,7 @@ Everything else is modifications to existing files.
 
 ---
 
-- [ ] **Unit B2: Grace auth integration — consume the lib**
+- [x] **Unit B2: Grace auth integration — consume the lib**
 
 **Goal:** Grace renders a sign-in affordance in its navbar, picks up the cross-app session, and signs in via the lib's modal — all using `@aquaveo/geoglows-auth/core`'s new exports. Zero copy-paste of UI files.
 
@@ -423,7 +426,7 @@ Everything else is modifications to existing files.
 
 ---
 
-- [ ] **Unit B3: Portal integration — rewrites + apps catalog enable**
+- [x] **Unit B3: Portal integration — rewrites + apps catalog enable**
 
 **Goal:** Portal recognizes grace as an active sub-app: `/grace-groundwater` proxies to grace's Vercel deploy; the landing page card is enabled.
 
@@ -457,7 +460,7 @@ Everything else is modifications to existing files.
 
 ---
 
-- [ ] **Unit B4: Operational — env vars, deploy ordering, smoke test**
+- [x] **Unit B4: Operational — env vars, deploy ordering, smoke test**
 
 **Goal:** Production deploy of grace + portal works end-to-end with cross-app SSO.
 

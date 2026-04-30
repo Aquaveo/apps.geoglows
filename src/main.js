@@ -1,5 +1,5 @@
 import "./style.css";
-import "@aquaveo/geoglows-auth/styles.css";
+import "@aquaveo/geoglows-auth/core/sign-in.css";
 import {
   bootstrapSession,
   mountSignInModal,
@@ -113,7 +113,7 @@ async function initApp() {
   // src/auth.js when the navbar's "Sign in" button is clicked) to the
   // modal's open() handle. This decouples any UI surface that wants to
   // request sign-in from a direct reference to the modal.
-  const signInModal = mountSignInModal({ supabase, authAdapter: auth });
+  const signInModal = mountSignInModal({ authAdapter: auth });
   window.addEventListener(SIGN_IN_REQUESTED_EVENT, () => signInModal.open());
 
   window.addEventListener("hashchange", () => {

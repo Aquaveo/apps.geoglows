@@ -73,6 +73,41 @@ afterEach(() => {
   document.body.innerHTML = "";
 });
 
+describe("bindWorkspaceEvents — auth navbar buttons (namespaced IDs)", () => {
+  // The navbar IDs are owned by @aquaveo/geoglows-auth's renderAuthAction:
+  // #geoglowsSignIn (signed-out) and #geoglowsSignOut (signed-in dropdown).
+  // events.js must bind those exact IDs so that clicking the navbar fires
+  // signInRedirect / signOutRedirect — the bridge SIGN_IN_REQUESTED_EVENT
+  // is then dispatched by signInRedirect, which main.js wires to the
+  // mountSignInModal handle.
+
+  it("clicking #geoglowsSignIn triggers signInRedirect from the lib's namespaced ID", async () => {
+    const { signInRedirect } = await import("../src/auth.js");
+    document.body.innerHTML = '<button id="geoglowsSignIn">Sign in</button>';
+    bindWorkspaceEvents(vi.fn());
+
+    document.getElementById("geoglowsSignIn").click();
+
+    expect(signInRedirect).toHaveBeenCalled();
+  });
+
+  it("clicking #geoglowsSignOut triggers signOutRedirect from the lib's namespaced ID", async () => {
+    const { signOutRedirect } = await import("../src/auth.js");
+    document.body.innerHTML = '<button id="geoglowsSignOut">Sign out</button>';
+    const setState = vi.fn();
+    bindWorkspaceEvents(setState);
+
+    document.getElementById("geoglowsSignOut").click();
+    // Click handler is async; let microtasks settle.
+    await Promise.resolve();
+
+    expect(signOutRedirect).toHaveBeenCalled();
+    expect(setState).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "signing_out" }),
+    );
+  });
+});
+
 describe("bindWorkspaceEvents — profile-edit submit", () => {
   it("rejects empty first_name and never calls updateProfile", () => {
     buildForm({ first_name: "  " });

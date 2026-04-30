@@ -3,7 +3,7 @@ import { loadAccountSummary, updateProfile } from "./account.js";
 import { toggleTheme } from "./theme.js";
 
 export function bindWorkspaceEvents(setState) {
-  document.getElementById("signIn")?.addEventListener("click", async () => {
+  document.getElementById("geoglowsSignIn")?.addEventListener("click", async () => {
     try {
       // The wrapper from auth.js dispatches the geoglows:sign-in-requested
       // event the inline modal listens for.
@@ -14,7 +14,7 @@ export function bindWorkspaceEvents(setState) {
     }
   });
 
-  document.getElementById("signOut")?.addEventListener("click", async () => {
+  document.getElementById("geoglowsSignOut")?.addEventListener("click", async () => {
     setState({ action: "signing_out" });
     try {
       await signOutRedirect();

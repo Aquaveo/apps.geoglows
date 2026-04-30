@@ -1,18 +1,21 @@
 import "./style.css";
-import { bootstrapSession } from "@aquaveo/geoglows-auth/core";
+import "@aquaveo/geoglows-auth/core/sign-in.css";
+import {
+  bootstrapSession,
+  mountSignInModal,
+  renderAuthAction,
+} from "@aquaveo/geoglows-auth/core";
 import { inject } from "@vercel/analytics";
 import { injectSpeedInsights } from "@vercel/speed-insights";
 
-import { auth } from "./auth.js";
+import { auth, SIGN_IN_REQUESTED_EVENT } from "./auth.js";
 import { supabase } from "./supabase.js";
 import { initTheme, updateThemeIcon } from "./theme.js";
 import { bindWorkspaceEvents } from "./events.js";
 import { ICONS } from "./icons.js";
-import { renderAuthAction } from "./ui/navbar.js";
 import { renderAppsPage } from "./ui/appsPage.js";
 import { renderProfilePage } from "./ui/profilePage.js";
 import { renderFooter } from "./ui/footer.js";
-import { mountSignInModal } from "./ui/signInModal.js";
 
 function pageFromHash(hash) {
   // Accept the legacy #workspace anchor as a synonym for #profile so
@@ -104,7 +107,14 @@ async function runBootstrap() {
 async function initApp() {
   initTheme();
   renderApp();
-  mountSignInModal();
+
+  // Mount the lib's vanilla sign-in modal and bridge our window-event
+  // dispatch (SIGN_IN_REQUESTED_EVENT — fired by signInRedirect() in
+  // src/auth.js when the navbar's "Sign in" button is clicked) to the
+  // modal's open() handle. This decouples any UI surface that wants to
+  // request sign-in from a direct reference to the modal.
+  const signInModal = mountSignInModal({ authAdapter: auth });
+  window.addEventListener(SIGN_IN_REQUESTED_EVENT, () => signInModal.open());
 
   window.addEventListener("hashchange", () => {
     setState({ currentPage: pageFromHash(window.location.hash) });

@@ -10,24 +10,23 @@
 - **State machine**: `src/main.js` owns a single `appState` object; `setState(patch)` re-renders the whole tree by re-assigning `#app.innerHTML`. No virtual DOM, no reconciliation — every re-render rebuilds. Event handlers re-bind on every render via `bindWorkspaceEvents`
 - **Session bootstrap**: `bootstrapSession` from `@aquaveo/geoglows-auth/core` is called from a `supabase.auth.onAuthStateChange("INITIAL_SESSION", ...)` listener — only after Supabase JS has finished `detectSessionInUrl`. A 2s safety-net timeout backstops the listener
 - **Profile data flow**: Supabase Auth issues a session → `bootstrapSession` calls `ensureProfile` (lib) → `profiles` row exists → `loadAccountSummary` returns `{ profile }`. Edits go through `updateProfile` (lib) which updates the `profiles` table directly; `display_name` is recomposed from name parts on update
-- **HTML escape discipline**: every `${value}` interpolation that could carry user input MUST go through `escape()` from `src/ui/escape.js`. The portal renders by template-string-then-innerHTML, so every interpolation is an HTML injection point. See `docs/solutions/security-issues/html-escape-discipline-vanilla-js-templates-2026-04-29.md`
+- **HTML escape discipline**: every `${value}` interpolation that could carry user input MUST go through `escapeHtml()` imported from `@aquaveo/geoglows-auth/core`. The portal renders by template-string-then-innerHTML, so every interpolation is an HTML injection point. See `docs/solutions/security-issues/html-escape-discipline-vanilla-js-templates-2026-04-29.md`
 
 ## Key Files
-- `src/main.js` — app entry, `appState`, `render(state)`, hash routing (`#apps` / `#profile`), Supabase auth-state listener and OAuth callback URL cleanup
+- `src/main.js` — app entry, `appState`, `render(state)`, hash routing (`#apps` / `#profile`), Supabase auth-state listener and OAuth callback URL cleanup. Mounts the lib's `mountSignInModal` and bridges the `geoglows:sign-in-requested` window event to its `open()` handle
 - `src/auth.js` — re-exports `signInRedirect` / `signOutRedirect` / `signInWithPassword` / `signInWithOAuth` from the lib's Supabase Auth adapter; dispatches the `geoglows:sign-in-requested` window event the modal listens for
 - `src/supabase.js` — single Supabase client constructed at module load from `import.meta.env.VITE_SUPABASE_URL` + `VITE_SUPABASE_PUBLISHABLE_KEY`
 - `src/account.js` — wrappers around `loadAccountSummary` / `updateProfile` / `isProfileComplete` from the lib; injects current user
-- `src/events.js` — every DOM event handler the portal binds (sign-in, sign-out, profile edit, theme toggle); re-bound on every render
+- `src/events.js` — every DOM event handler the portal binds; binds the lib's namespaced auth IDs `#geoglowsSignIn` / `#geoglowsSignOut`. Re-bound on every render
 - `src/ui/profilePage.js` — view + edit modes, completion banner; `field(label, value)` escapes value, `fieldRow(label, displayHtml)` accepts pre-built HTML
-- `src/ui/signInModal.js` — vanilla-JS `<dialog>`-based modal, OAuth + email/password + sign-up branch (collects `first_name`/`last_name` and forwards via `options.data`)
-- `src/ui/navbar.js` — auth action slot (avatar/menu when signed in, "Sign in" button when signed out)
-- `src/ui/escape.js` — shared `escape(value)` helper; import this in every UI module
 - `supabase/migrations/` — Supabase CLI migrations (forward-only). `profiles` table + RLS policies live here
+
+The vanilla sign-in modal, navbar auth-action slot, and `escapeHtml` helper live in `@aquaveo/geoglows-auth/core` (imported via `mountSignInModal`, `renderAuthAction`, `escapeHtml`). The matching CSS ships at `@aquaveo/geoglows-auth/core/sign-in.css`.
 
 ## Conventions
 - Vanilla JS only (no TypeScript, no JSX, no React)
-- Tailwind utility classes inline; no `@apply` or component CSS
-- Native `<dialog>` for modals, with explicit Tailwind centering (`fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`) — UA centering is unreliable under Tailwind preflight
+- Tailwind utility classes inline; no `@apply` or component CSS in app-owned `src/` — UI components imported from `@aquaveo/geoglows-auth` ship their own plain CSS and are exempt
+- Native `<dialog>` for modals with explicit centering — UA centering is unreliable under Tailwind preflight
 - Profile-of-record is the `profiles` table. `user_metadata` from Supabase Auth is sign-up-time identity ONLY — never re-flow it into `profiles` on subsequent sign-ins. See `geoglows-auth/docs/solutions/best-practices/user-metadata-is-auth-identity-not-profile-of-record-2026-04-29.md`
 - Application-layer required-field enforcement (e.g., first_name/last_name on profile save). DB columns are nullable so legacy/OAuth-skipped rows stay valid
 

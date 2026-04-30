@@ -1,0 +1,25 @@
+-- Drop the public.profiles bridge view now that all consumers are on
+-- @aquaveo/geoglows-auth >= 1.0.0 (which targets core.profiles directly via
+-- supabase.schema('core').from('profiles')).
+--
+-- The bridge view was installed in 20260429180000_relocate_profiles_to_core.sql
+-- with `WITH (security_invoker = true)` to keep the public.profiles name working
+-- for older 0.3.x consumers during the cutover. Both production consumers
+-- (apps.geoglows + the Aquaveo-controlled aquiferx fork) shipped 1.0.0 on
+-- 2026-04-30, so the bridge has served its purpose.
+--
+-- Plan:    docs/plans/2026-04-29-005-feat-profiles-relocation-to-core-schema-plan.md (Unit 5)
+-- Pattern: docs/solutions/best-practices/zero-downtime-schema-relocation-with-security-invoker-view-2026-04-30.md
+--
+-- Rollback (if any consumer is somehow still on 0.3.x and breaks):
+--   create view public.profiles
+--     with (security_invoker = true)
+--     as select * from core.profiles;
+--   grant select, insert, update on public.profiles to authenticated;
+--   grant all on public.profiles to service_role;
+--
+-- After this migration: public.profiles no longer exists. PostgREST requests
+-- without `Accept-Profile: core` (i.e., older clients calling .from('profiles'))
+-- will return "relation does not exist". This is the intended end state.
+
+drop view public.profiles;

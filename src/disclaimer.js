@@ -117,7 +117,7 @@ function renderDisclaimerBody() {
  */
 function renderDisclaimerModalContents() {
   return `
-    <div class="flex flex-col max-h-[80vh]">
+    <div class="flex flex-col h-full max-h-[90vh]">
       <header class="px-6 pt-6 pb-3 border-b border-slate-200 dark:border-slate-800">
         <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Disclaimers</h2>
       </header>

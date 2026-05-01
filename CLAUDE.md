@@ -52,10 +52,11 @@ The vanilla sign-in modal, navbar auth-action slot, and `escapeHtml` helper live
 - `docs/solutions/` — captured learnings from past problems (bugs, best practices, workflow patterns), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`). Relevant when implementing or debugging in documented areas — grep here before reinventing
 
 ## Disclaimer
-- First-visit disclaimer modal lives in `src/disclaimer.js`. Acceptance + rejection are persisted in `localStorage` under the `geoglows-disclaimer-acceptance` key as `{ version, status: 'accepted'|'rejected', timestamp }`
+- Informative first-visit disclaimer modal (terms-of-use style) in `src/disclaimer.js`. Single "I understand" acknowledgment button — no rejection path. Acceptance is persisted in `localStorage` under the `geoglows-disclaimer-acceptance` key as `{ version, status: 'accepted', timestamp }`
 - **To bump the disclaimer text**: edit `DISCLAIMER_TEXT` AND increment `DISCLAIMER_VERSION` (date string like `"2026-04-30"`) in `src/disclaimer.js`. Bumping the version forces all existing users to re-acknowledge. Comparison is strict equality — older or newer versions both re-prompt
 - **The template MUST NOT contain `${...}` interpolation of dynamic values.** `DISCLAIMER_TEXT` is a static constant; future dynamic content must use `escapeHtml(...)` per the discipline at `docs/solutions/security-issues/html-escape-discipline-vanilla-js-templates-2026-04-29.md`
-- **Recovery flow is NOT gated by the disclaimer.** Password-recovery and OAuth callbacks proceed normally; the disclaimer modal opens AFTER the recovery modal closes (or on next normal visit). Intentional decoupling — gating recovery would create a UX trap (rejecting invalidates the user's one-time OTP)
+- **Escape closes the modal without writing to localStorage** — user re-prompts on next visit. Native `<dialog>` semantics; not a "decline" mechanism
+- **Recovery flow is NOT gated by the disclaimer.** Password-recovery and OAuth callbacks proceed normally; the disclaimer modal opens AFTER the recovery modal closes (or on next normal visit)
 - **Sub-apps (grace, rfs, aquiferx) do NOT enforce the disclaimer.** Bookmarks to sub-apps bypass the gate entirely. This is acceptable for the "best-effort acknowledgment notice" framing
-- **Legal-hardening (audit trail, entity attribution, per-account enforcement) is a separate future plan.** The current mechanism is informed acknowledgment, not technical enforcement; localStorage is dev-tools-bypassable
+- **Rejection / decline path is deferred** to a future plan along with audit trail, entity attribution, and per-account enforcement. The current mechanism is informational acknowledgment, not technical enforcement; localStorage is dev-tools-bypassable
 - Plan: `docs/plans/2026-04-30-006-feat-disclaimer-acceptance-modal-plan.md`

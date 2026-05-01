@@ -103,14 +103,4 @@ export function bindWorkspaceEvents(setState) {
     });
 
   document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
-
-  // Disclaimer rejection page — Reconsider button re-opens the modal. The
-  // click handler is wired in main.js (where the modal handle lives) via a
-  // window-level CustomEvent, keeping events.js free of module-level refs
-  // to the disclaimer modal.
-  document
-    .getElementById("geoglows-disclaimer-reconsider")
-    ?.addEventListener("click", () => {
-      window.dispatchEvent(new CustomEvent("geoglows:disclaimer-reconsider"));
-    });
 }

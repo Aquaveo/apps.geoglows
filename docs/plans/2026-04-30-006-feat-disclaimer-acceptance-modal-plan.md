@@ -1,17 +1,25 @@
 ---
-title: "feat: First-visit disclaimer modal with accept/reject"
+title: "feat: First-visit disclaimer acknowledgment modal"
 type: feat
-status: active
+status: shipped
 date: 2026-04-30
 ---
 
-# feat: First-visit disclaimer modal with accept/reject
+# feat: First-visit disclaimer acknowledgment modal
+
+> **Post-ship simplification (2026-04-30):** the `Reject` button and the
+> rejection-page flow were removed at user direction. The shipped modal is
+> informative-only — single "I understand" button. Decline-and-block flow,
+> Reconsider button, and persisted rejection state are all deferred to a
+> future plan along with audit-trail / per-account enforcement / entity
+> attribution. Sections of this plan that describe the rejection mechanism
+> are kept as historical context.
 
 ## Overview
 
-Add a disclaimer modal that prompts apps.geoglows visitors on first visit. The user explicitly accepts or rejects. Both choices persist in `localStorage` keyed by a disclaimer version so future text changes can re-prompt. Rejection renders a full-page "you've declined" state with a `Reconsider` button — the user cannot access the app library or profile until they accept. Escape closes the modal without choosing (re-prompts on next visit), respecting native `<dialog>` semantics.
+Add an informative disclaimer modal (terms-of-use style) that prompts apps.geoglows visitors on first visit. The user clicks "I understand" to acknowledge; the acceptance persists in `localStorage` keyed by a disclaimer version so future text changes can re-prompt. Escape closes the modal without writing to localStorage (user re-prompts on next visit), respecting native `<dialog>` semantics.
 
-The disclaimer text is provided verbatim from the request and is treated as a static string constant in source. **Legal precision (correct entity attribution, exact wording, audit-trail backing) is explicitly out of scope and deferred to a separate plan** — this plan ships the *mechanism*, not the legal artifact.
+The disclaimer text is provided verbatim from the request and is treated as a static string constant in source. **Legal precision (correct entity attribution, exact wording, audit-trail backing, decline-and-block flow) is explicitly out of scope and deferred to a separate plan** — this plan ships the *mechanism*, not the legal artifact.
 
 ## Problem Frame
 
@@ -64,6 +72,7 @@ Scope is apps.geoglows only (the portal entry point). Sub-apps reached via porta
 
 ### Deferred to Separate Tasks
 
+- **Reject / decline flow** — the post-ship simplification removed the Reject button entirely. Re-introducing a decline-and-block flow (rejection page, persisted rejection state, Reconsider button, sub-app gating tied to rejection) is a future plan if needed. Per-user direction at ship time: the modal is informative-only; users either acknowledge or close the tab.
 - **Legal-hardening plan** (a single future plan covering several deferred concerns):
   - Confirm legal entity attribution in the disclaimer text ("we" → named entity)
   - Per-account audit trail via Supabase (`core.profiles.disclaimer_version_accepted` + `disclaimer_accepted_at`)

@@ -1,13 +1,16 @@
 // src/disclaimer.js
 //
-// First-visit disclaimer modal: pure helpers + DOM mount + rejection-page renderer.
+// First-visit disclaimer modal: pure helpers + DOM mount.
 //
 // Per plan docs/plans/2026-04-30-006-feat-disclaimer-acceptance-modal-plan.md.
+// This is an INFORMATIVE notice (terms-of-use style): a single
+// "I understand" button acknowledges the disclaimer. The user cannot
+// "reject" — rejection (declining + a rejection page + Reconsider flow)
+// is deferred to a future plan along with audit-trail / per-account
+// enforcement / entity attribution.
+//
 // Recovery flow is NOT gated by the disclaimer; this module is a UI gate only.
-// localStorage tampering / dev-tools bypass is acknowledged out-of-scope —
-// the mechanism is informed acknowledgment, not technical enforcement.
-// Audit trail / per-account enforcement / entity attribution are deferred
-// to a future legal-hardening plan.
+// localStorage tampering / dev-tools bypass is acknowledged out-of-scope.
 
 // DISCLAIMER_VERSION — string identifier for the current disclaimer text.
 // BUMP this constant whenever DISCLAIMER_TEXT changes (any wording change,
@@ -15,7 +18,7 @@
 // Comparison is strict equality on the version string — not greater-than/less-than.
 export const DISCLAIMER_VERSION = "2026-04-30";
 
-// localStorage key under which the user's decision is persisted.
+// localStorage key under which the user's acknowledgment is persisted.
 export const STORAGE_KEY = "geoglows-disclaimer-acceptance";
 
 // Static disclaimer text — single string constant. The rendered template
@@ -48,18 +51,16 @@ Use of the service must not interfere with its operation or attempt to misuse, e
 
 Use of the website and related services must comply with applicable laws and regulations.`;
 
-const VALID_STATUSES = new Set(["accepted", "rejected"]);
-
 /**
- * Returns the user's recorded decision for the current disclaimer version.
+ * Returns the user's acknowledgment status for the current disclaimer version.
  *
- * Returns 'accepted' or 'rejected' only when localStorage has an entry whose
- * version matches `DISCLAIMER_VERSION` AND whose status is recognized.
+ * Returns 'accepted' only when localStorage has an entry whose version matches
+ * `DISCLAIMER_VERSION` AND whose status is 'accepted'.
  * Returns 'pending' for anything else: missing entry, version mismatch
  * (older or newer — strict equality), malformed JSON, unknown status,
  * OR if `localStorage.getItem` itself throws (Safari private mode).
  *
- * @returns {'accepted' | 'rejected' | 'pending'}
+ * @returns {'accepted' | 'pending'}
  */
 export function getDisclaimerStatus() {
   try {
@@ -68,34 +69,30 @@ export function getDisclaimerStatus() {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return "pending";
     if (parsed.version !== DISCLAIMER_VERSION) return "pending";
-    if (!VALID_STATUSES.has(parsed.status)) return "pending";
-    return parsed.status;
+    if (parsed.status !== "accepted") return "pending";
+    return "accepted";
   } catch {
     return "pending";
   }
 }
 
 /**
- * Persists the user's decision to localStorage. Silent on quota / private-mode
- * errors — the in-memory state machine still progresses; the user will simply
- * re-prompt on next visit.
- *
- * @param {'accepted' | 'rejected'} status
+ * Persists the user's acknowledgment to localStorage. Silent on quota /
+ * private-mode errors — the in-memory state machine still progresses; the
+ * user will simply re-prompt on next visit.
  */
-export function recordDisclaimerDecision(status) {
+export function recordDisclaimerAcceptance() {
   try {
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
         version: DISCLAIMER_VERSION,
-        status,
+        status: "accepted",
         timestamp: Date.now(),
       }),
     );
   } catch {
     // Silent swallow — quota exceeded, private mode, browser disabled storage.
-    // Acceptable degradation: in-memory state machine still progresses; user
-    // re-prompts on next visit.
   }
 }
 
@@ -124,20 +121,13 @@ function renderDisclaimerModalContents() {
       <div tabindex="0" class="flex-1 min-h-0 overflow-y-auto px-6 py-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed space-y-3 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-inset">
         ${renderDisclaimerBody()}
       </div>
-      <footer class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 bg-white dark:bg-slate-900">
-        <button
-          id="geoglows-disclaimer-reject"
-          type="button"
-          class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 min-h-[44px] transition-colors"
-        >
-          Reject
-        </button>
+      <footer class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex justify-end bg-white dark:bg-slate-900">
         <button
           id="geoglows-disclaimer-accept"
           type="button"
-          class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold min-h-[44px] shadow-sm transition-colors"
+          class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold min-h-[44px] shadow-sm transition-colors"
         >
-          Accept
+          I understand
         </button>
       </footer>
     </div>
@@ -149,15 +139,15 @@ function renderDisclaimerModalContents() {
  * element in `index.html`. Returns an `{ open, close }` handle.
  *
  * Behavior:
- * - Accept and Reject buttons are bound at mount time.
+ * - Single "I understand" button bound at mount time.
  * - NO cancel-event listener — Escape closes the modal natively (no localStorage write;
  *   user re-prompts on next visit, equivalent to never having seen the modal).
  * - NO backdrop-click listener — native `<dialog>` doesn't close on backdrop click
  *   without an explicit listener; we don't add one.
  *
- * @param {{ onAccept: () => void, onReject: () => void }} handlers
+ * @param {{ onAccept: () => void }} handlers
  */
-export function mountDisclaimerModal({ onAccept, onReject }) {
+export function mountDisclaimerModal({ onAccept }) {
   const dialog = document.getElementById("geoglows-disclaimer-modal");
   if (!dialog) {
     throw new Error(
@@ -170,9 +160,6 @@ export function mountDisclaimerModal({ onAccept, onReject }) {
   dialog
     .querySelector("#geoglows-disclaimer-accept")
     ?.addEventListener("click", () => onAccept());
-  dialog
-    .querySelector("#geoglows-disclaimer-reject")
-    ?.addEventListener("click", () => onReject());
 
   return {
     open() {
@@ -182,32 +169,4 @@ export function mountDisclaimerModal({ onAccept, onReject }) {
       if (dialog.open) dialog.close();
     },
   };
-}
-
-/**
- * Renders the full-page "you've declined" view as an HTML string. Consumer
- * (`main.js`) interpolates this into `#app.innerHTML` when the user has
- * persisted a rejection. The Reconsider button's click is bound by
- * `events.js#bindWorkspaceEvents` (re-bound on every render).
- */
-export function renderDisclaimerRejectedPage() {
-  return `
-    <div class="min-h-screen flex items-center justify-center px-6 water-mesh">
-      <div class="max-w-md w-full text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-10">
-        <h1 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">
-          You've declined the disclaimer
-        </h1>
-        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-          You can review and reconsider it at any time. Until then, the GEOGLOWS app library is unavailable.
-        </p>
-        <button
-          id="geoglows-disclaimer-reconsider"
-          type="button"
-          class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm transition-colors"
-        >
-          Reconsider
-        </button>
-      </div>
-    </div>
-  `;
 }

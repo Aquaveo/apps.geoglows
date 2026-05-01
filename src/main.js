@@ -20,9 +20,8 @@ import {
 import {
   STORAGE_KEY as DISCLAIMER_STORAGE_KEY,
   getDisclaimerStatus,
-  recordDisclaimerDecision,
+  recordDisclaimerAcceptance,
   mountDisclaimerModal,
-  renderDisclaimerRejectedPage,
 } from "./disclaimer.js";
 import { ICONS } from "./icons.js";
 import { renderAppsPage } from "./ui/appsPage.js";
@@ -45,8 +44,8 @@ const appState = {
   currentPage: pageFromHash(window.location.hash),
   profileEditing: false,
   profileBannerDismissed: false,
-  // 'pending' | 'accepted' | 'rejected' — see src/disclaimer.js. Recovery
-  // flow is NOT gated by this; it's a UI gate only.
+  // 'pending' | 'accepted' — see src/disclaimer.js. Informative
+  // notice; no rejection path (deferred to a future plan).
   disclaimerStatus: getDisclaimerStatus(),
 };
 
@@ -63,17 +62,9 @@ function setState(patch) {
 function render(state) {
   const appEl = document.querySelector("#app");
 
-  // Disclaimer-rejected: render the full-page rejection view instead of the
-  // app catalog or profile. The Reconsider button click is bound by
-  // bindWorkspaceEvents().
-  if (state.disclaimerStatus === "rejected") {
-    appEl.innerHTML = renderDisclaimerRejectedPage();
-    return;
-  }
-
   // Disclaimer-pending with the modal currently open: render an empty #app
   // so the apps catalog doesn't flash behind the modal backdrop. The normal
-  // catalog/profile render resumes once the user accepts.
+  // catalog/profile render resumes once the user acknowledges.
   if (state.disclaimerStatus === "pending" && disclaimerModal) {
     appEl.innerHTML = "";
     return;
@@ -167,9 +158,8 @@ async function initApp() {
   const isRecoveryFlow =
     recoveryUrl.kind !== "none" || hasImplicitRecoveryHash;
 
-  // Lazy-mount the disclaimer modal only when the user hasn't accepted yet.
-  // If status is 'rejected', the rejection page renders directly — no modal
-  // mount. If status is 'pending' AND a recovery URL is present, defer the
+  // Lazy-mount the disclaimer modal only when the user hasn't acknowledged
+  // yet. If status is 'pending' AND a recovery URL is present, defer the
   // mount; we'll mount/open after the recovery modal closes (see below).
   function openDisclaimerNow() {
     if (disclaimerModal) {
@@ -178,14 +168,9 @@ async function initApp() {
     }
     disclaimerModal = mountDisclaimerModal({
       onAccept: () => {
-        recordDisclaimerDecision("accepted");
+        recordDisclaimerAcceptance();
         disclaimerModal.close();
         setState({ disclaimerStatus: "accepted" });
-      },
-      onReject: () => {
-        recordDisclaimerDecision("rejected");
-        disclaimerModal.close();
-        setState({ disclaimerStatus: "rejected" });
       },
     });
     disclaimerModal.open();
@@ -195,19 +180,10 @@ async function initApp() {
     openDisclaimerNow();
   }
 
-  // Reconsider button on the rejection page → re-open the modal. The click
-  // is dispatched as a window event from events.js#bindWorkspaceEvents to
-  // avoid coupling events.js to the disclaimer modal handle. The state
-  // stays 'rejected' until the user accepts in the re-opened modal.
-  window.addEventListener("geoglows:disclaimer-reconsider", () => {
-    openDisclaimerNow();
-  });
-
   renderApp();
 
-  // Cross-tab sync. When another tab writes the disclaimer entry, mirror
-  // that decision in this tab. Last-write-wins for conflicting cross-tab
-  // decisions; documented limitation.
+  // Cross-tab sync. When another tab acknowledges the disclaimer, close
+  // this tab's modal too.
   window.addEventListener("storage", (event) => {
     if (event.key !== DISCLAIMER_STORAGE_KEY) return;
     const next = getDisclaimerStatus();

@@ -40,7 +40,8 @@ The vanilla sign-in modal, navbar auth-action slot, and `escapeHtml` helper live
 ## Tests
 - vitest 3 + jsdom 26
 - `tests/setup.js` stubs `import.meta.env.VITE_*` so module-load-time singletons don't throw at test import; see `docs/solutions/developer-experience/vitest-setupfiles-for-vite-env-singletons-2026-04-29.md`
-- jsdom 26 ships `HTMLDialogElement` without `showModal`/`close`; see `docs/solutions/test-failures/jsdom-26-htmldialogelement-undefined-2026-04-29.md` for the prototype patch
+- jsdom 26 ships `HTMLDialogElement` without `showModal`/`close`; `tests/setup.js` patches the prototype. See `docs/solutions/test-failures/jsdom-26-htmldialogelement-undefined-2026-04-29.md`
+- jsdom 26 also ships `localStorage` / `sessionStorage` as empty plain objects with no Storage methods; `tests/setup.js` polyfills them. See `docs/solutions/developer-experience/jsdom-26-localstorage-polyfill-2026-04-30.md`
 - Test files live in `tests/` (mirrors `src/`); pattern `tests/**/*.test.js`
 
 ## Environment

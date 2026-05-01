@@ -288,11 +288,16 @@ async function initApp() {
       bootstrapSafe("SIGNED_IN");
     }
     if (event === "PASSWORD_RECOVERY") {
-      // Supabase fires this once during _initialize() when the URL hash
-      // carries `#type=recovery`. Open the modal in setNewPassword view
-      // so the user can set a new password. The modal handles the
-      // updateUserPassword + signOutOtherSessions sequence and fires
-      // SIGNED_IN on success (which the dedup above will catch).
+      // Only open the recovery modal if THIS tab actually loaded with
+      // a recovery URL. Supabase fires PASSWORD_RECOVERY on every tab
+      // that revalidates a recovery-type session via getSession() —
+      // including tabs that did NOT receive the recovery email link
+      // (e.g., the user clicked the link in another tab while
+      // apps.geoglows was already open elsewhere). Without this gate
+      // the setNewPassword modal pops up cross-tab, which is
+      // misleading. `isRecoveryFlow` was computed at module load above
+      // from detectRecoveryUrlState + the implicit-flow hash check.
+      if (!isRecoveryFlow) return;
       signInModal.open({ view: "setNewPassword" });
     }
   });

@@ -121,7 +121,7 @@ function renderDisclaimerModalContents() {
       <header class="px-6 pt-6 pb-3 border-b border-slate-200 dark:border-slate-800">
         <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Disclaimers</h2>
       </header>
-      <div tabindex="0" class="overflow-y-auto px-6 py-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed space-y-3 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-inset">
+      <div tabindex="0" class="flex-1 min-h-0 overflow-y-auto px-6 py-4 text-sm text-slate-700 dark:text-slate-300 leading-relaxed space-y-3 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-inset">
         ${renderDisclaimerBody()}
       </div>
       <footer class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 bg-white dark:bg-slate-900">

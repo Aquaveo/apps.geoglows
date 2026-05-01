@@ -43,7 +43,8 @@
       "tags": ["Mapping", "Groundwater", "Legacy"],
       "iconClass": "text-indigo-400",
       "iconName": "folded-map",
-      "disabled": true
+      "disabled": true,
+      "hidden": true
     }
   ],
   "contributors": ["Brigham Young University"],

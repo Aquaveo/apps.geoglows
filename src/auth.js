@@ -7,9 +7,16 @@
 import { createSupabaseAuthAdapter } from "@aquaveo/geoglows-auth/core";
 import { supabase } from "./supabase.js";
 
+// Preserve pathname so password-recovery / magic-link emails return
+// users to the same surface they started from. apps.geoglows itself
+// runs at the root path so origin and origin+pathname are typically
+// equivalent here, but this matches the convention used by the
+// proxied sub-apps (grace, rfs, aquiferx-via-proxy) and is forward-
+// compatible if the portal ever adds subroutes that should preserve
+// recovery context.
 const auth = createSupabaseAuthAdapter({
   supabase,
-  defaultRedirectTo: window.location.origin,
+  defaultRedirectTo: window.location.origin + window.location.pathname,
   logoutRedirectTo: window.location.origin,
 });
 

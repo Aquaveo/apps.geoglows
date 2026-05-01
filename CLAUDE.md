@@ -50,3 +50,12 @@ The vanilla sign-in modal, navbar auth-action slot, and `escapeHtml` helper live
 ## Documentation
 - `docs/plans/` — engineering plans (`YYYY-MM-DD-NNN-<type>-<descriptive-name>-plan.md`). Living documents with progress checkboxes; see existing plans for format
 - `docs/solutions/` — captured learnings from past problems (bugs, best practices, workflow patterns), organized by category with YAML frontmatter (`module`, `tags`, `problem_type`). Relevant when implementing or debugging in documented areas — grep here before reinventing
+
+## Disclaimer
+- First-visit disclaimer modal lives in `src/disclaimer.js`. Acceptance + rejection are persisted in `localStorage` under the `geoglows-disclaimer-acceptance` key as `{ version, status: 'accepted'|'rejected', timestamp }`
+- **To bump the disclaimer text**: edit `DISCLAIMER_TEXT` AND increment `DISCLAIMER_VERSION` (date string like `"2026-04-30"`) in `src/disclaimer.js`. Bumping the version forces all existing users to re-acknowledge. Comparison is strict equality — older or newer versions both re-prompt
+- **The template MUST NOT contain `${...}` interpolation of dynamic values.** `DISCLAIMER_TEXT` is a static constant; future dynamic content must use `escapeHtml(...)` per the discipline at `docs/solutions/security-issues/html-escape-discipline-vanilla-js-templates-2026-04-29.md`
+- **Recovery flow is NOT gated by the disclaimer.** Password-recovery and OAuth callbacks proceed normally; the disclaimer modal opens AFTER the recovery modal closes (or on next normal visit). Intentional decoupling — gating recovery would create a UX trap (rejecting invalidates the user's one-time OTP)
+- **Sub-apps (grace, rfs, aquiferx) do NOT enforce the disclaimer.** Bookmarks to sub-apps bypass the gate entirely. This is acceptable for the "best-effort acknowledgment notice" framing
+- **Legal-hardening (audit trail, entity attribution, per-account enforcement) is a separate future plan.** The current mechanism is informed acknowledgment, not technical enforcement; localStorage is dev-tools-bypassable
+- Plan: `docs/plans/2026-04-30-006-feat-disclaimer-acceptance-modal-plan.md`

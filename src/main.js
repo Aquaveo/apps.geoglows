@@ -17,6 +17,13 @@ import {
   getInitialState,
   isRedundantSignIn,
 } from "./auth-events.js";
+import {
+  STORAGE_KEY as DISCLAIMER_STORAGE_KEY,
+  getDisclaimerStatus,
+  recordDisclaimerDecision,
+  mountDisclaimerModal,
+  renderDisclaimerRejectedPage,
+} from "./disclaimer.js";
 import { ICONS } from "./icons.js";
 import { renderAppsPage } from "./ui/appsPage.js";
 import { renderProfilePage } from "./ui/profilePage.js";
@@ -38,7 +45,15 @@ const appState = {
   currentPage: pageFromHash(window.location.hash),
   profileEditing: false,
   profileBannerDismissed: false,
+  // 'pending' | 'accepted' | 'rejected' — see src/disclaimer.js. Recovery
+  // flow is NOT gated by this; it's a UI gate only.
+  disclaimerStatus: getDisclaimerStatus(),
 };
+
+// Module-level handle to the disclaimer modal, created lazily inside initApp()
+// when the user has not yet accepted. Stays null when status is already
+// 'accepted' (no DOM mount is wasted on the 99%+ accepted-state visits).
+let disclaimerModal = null;
 
 function setState(patch) {
   Object.assign(appState, patch);
@@ -46,9 +61,27 @@ function setState(patch) {
 }
 
 function render(state) {
+  const appEl = document.querySelector("#app");
+
+  // Disclaimer-rejected: render the full-page rejection view instead of the
+  // app catalog or profile. The Reconsider button click is bound by
+  // bindWorkspaceEvents().
+  if (state.disclaimerStatus === "rejected") {
+    appEl.innerHTML = renderDisclaimerRejectedPage();
+    return;
+  }
+
+  // Disclaimer-pending with the modal currently open: render an empty #app
+  // so the apps catalog doesn't flash behind the modal backdrop. The normal
+  // catalog/profile render resumes once the user accepts.
+  if (state.disclaimerStatus === "pending" && disclaimerModal) {
+    appEl.innerHTML = "";
+    return;
+  }
+
   const isApps = state.currentPage !== "profile";
 
-  document.querySelector("#app").innerHTML = `
+  appEl.innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
       <nav class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-12">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center relative">
@@ -117,7 +150,73 @@ async function runBootstrap() {
 
 async function initApp() {
   initTheme();
+
+  // Detect any recovery-URL signal at module load. Used below to decide
+  // whether to defer the disclaimer modal so the recovery flow runs first.
+  const recoveryUrl = detectRecoveryUrlState({
+    hash: window.location.hash,
+    search: window.location.search,
+  });
+  // The implicit-flow recovery (`#access_token=...&type=recovery`) returns
+  // `kind: 'none'` from detectRecoveryUrlState because it's handled by
+  // Supabase JS via PASSWORD_RECOVERY. Test for it explicitly so we know to
+  // defer the disclaimer modal until that flow concludes too.
+  const hasImplicitRecoveryHash =
+    /(?:^|[#&?])access_token=/.test(window.location.hash) &&
+    /(?:^|[#&?])type=recovery/.test(window.location.hash);
+  const isRecoveryFlow =
+    recoveryUrl.kind !== "none" || hasImplicitRecoveryHash;
+
+  // Lazy-mount the disclaimer modal only when the user hasn't accepted yet.
+  // If status is 'rejected', the rejection page renders directly — no modal
+  // mount. If status is 'pending' AND a recovery URL is present, defer the
+  // mount; we'll mount/open after the recovery modal closes (see below).
+  function openDisclaimerNow() {
+    if (disclaimerModal) {
+      disclaimerModal.open();
+      return;
+    }
+    disclaimerModal = mountDisclaimerModal({
+      onAccept: () => {
+        recordDisclaimerDecision("accepted");
+        disclaimerModal.close();
+        setState({ disclaimerStatus: "accepted" });
+      },
+      onReject: () => {
+        recordDisclaimerDecision("rejected");
+        disclaimerModal.close();
+        setState({ disclaimerStatus: "rejected" });
+      },
+    });
+    disclaimerModal.open();
+  }
+
+  if (appState.disclaimerStatus === "pending" && !isRecoveryFlow) {
+    openDisclaimerNow();
+  }
+
+  // Reconsider button on the rejection page → re-open the modal. The click
+  // is dispatched as a window event from events.js#bindWorkspaceEvents to
+  // avoid coupling events.js to the disclaimer modal handle. The state
+  // stays 'rejected' until the user accepts in the re-opened modal.
+  window.addEventListener("geoglows:disclaimer-reconsider", () => {
+    openDisclaimerNow();
+  });
+
   renderApp();
+
+  // Cross-tab sync. When another tab writes the disclaimer entry, mirror
+  // that decision in this tab. Last-write-wins for conflicting cross-tab
+  // decisions; documented limitation.
+  window.addEventListener("storage", (event) => {
+    if (event.key !== DISCLAIMER_STORAGE_KEY) return;
+    const next = getDisclaimerStatus();
+    if (next === appState.disclaimerStatus) return;
+    if (next === "accepted" && disclaimerModal) {
+      disclaimerModal.close();
+    }
+    setState({ disclaimerStatus: next });
+  });
 
   // Mount the lib's vanilla sign-in modal and bridge our window-event
   // dispatch (SIGN_IN_REQUESTED_EVENT — fired by signInRedirect() in
@@ -132,10 +231,6 @@ async function initApp() {
   // open the modal in the recoveryError view so the user sees a clean error
   // instead of silent failure. See docs/plans/2026-04-30-002-feat-forgot-
   // password-flow-plan.md (Q1 + PKCE detector).
-  const recoveryUrl = detectRecoveryUrlState({
-    hash: window.location.hash,
-    search: window.location.search,
-  });
   if (recoveryUrl.kind === "pkce-unsupported") {
     console.error(
       "PKCE recovery flow is not supported in @aquaveo/geoglows-auth 1.2.x. " +
@@ -146,6 +241,19 @@ async function initApp() {
   } else if (recoveryUrl.kind === "expired") {
     signInModal.open({ view: "recoveryError" });
   }
+
+  // After the sign-in modal closes (recovery or normal), open the disclaimer
+  // modal IF the user hasn't yet decided. This is the deferred path for
+  // visitors who arrived via a recovery URL: recovery flow runs first, then
+  // the disclaimer prompt comes up. Re-checks status from getDisclaimerStatus()
+  // so a cross-tab acceptance during the recovery flow is honored.
+  // The lib's mountSignInModal doesn't expose the underlying <dialog> element,
+  // so we find it by the lib's stable class selector. Class is part of the
+  // lib's public CSS contract (sign-in.css).
+  const signInDialogEl = document.querySelector(".geoglows-signin-modal");
+  signInDialogEl?.addEventListener("close", () => {
+    if (getDisclaimerStatus() === "pending") openDisclaimerNow();
+  });
 
   window.addEventListener("hashchange", () => {
     setState({ currentPage: pageFromHash(window.location.hash) });

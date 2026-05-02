@@ -144,17 +144,33 @@ async function initApp() {
 
   // Detect any recovery-URL signal at module load. Used below to decide
   // whether to defer the disclaimer modal so the recovery flow runs first.
+  //
+  // Read URL via the inline-script-captured snapshot from index.html
+  // (window.__GEOGLOWS_INITIAL_URL__). Reading window.location directly
+  // here can race against Supabase JS's _initialize() — by the time
+  // initApp runs, the hash may already be cleared. The inline script in
+  // index.html runs before any module is fetched, guaranteeing the
+  // recovery hash is preserved here. See aquiferx 2026-05-01 race fix.
+  const initialUrl = window.__GEOGLOWS_INITIAL_URL__;
+  const initialHash =
+    initialUrl && typeof initialUrl.hash === "string"
+      ? initialUrl.hash
+      : window.location.hash;
+  const initialSearch =
+    initialUrl && typeof initialUrl.search === "string"
+      ? initialUrl.search
+      : window.location.search;
   const recoveryUrl = detectRecoveryUrlState({
-    hash: window.location.hash,
-    search: window.location.search,
+    hash: initialHash,
+    search: initialSearch,
   });
   // The implicit-flow recovery (`#access_token=...&type=recovery`) returns
   // `kind: 'none'` from detectRecoveryUrlState because it's handled by
   // Supabase JS via PASSWORD_RECOVERY. Test for it explicitly so we know to
   // defer the disclaimer modal until that flow concludes too.
   const hasImplicitRecoveryHash =
-    /(?:^|[#&?])access_token=/.test(window.location.hash) &&
-    /(?:^|[#&?])type=recovery/.test(window.location.hash);
+    /(?:^|[#&?])access_token=/.test(initialHash) &&
+    /(?:^|[#&?])type=recovery/.test(initialHash);
   const isRecoveryFlow =
     recoveryUrl.kind !== "none" || hasImplicitRecoveryHash;
 

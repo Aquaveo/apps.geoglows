@@ -10,15 +10,15 @@ const APP_SHOWCASE = {
   rfs: {
     context: "Explore historical streamflow, real-time conditions, and 15-day forecasts for rivers worldwide.",
     images: [
-      { src: "/showcase/hydroviewer-map.png", alt: "River network map of Europe with color-coded flow conditions" },
-      { src: "/showcase/hydroviewer-forecast.png", alt: "River discharge forecast with uncertainty bands and predicted flow" },
+      { src: "/showcase/hydroviewer-map.png", alt: "River network map of Europe with color-coded flow conditions", w: 2117, h: 1132 },
+      { src: "/showcase/hydroviewer-forecast.png", alt: "River discharge forecast with uncertainty bands and predicted flow", w: 1522, h: 573 },
     ],
   },
   ggst: {
     context: "Track changes in regional water storage using satellite gravity measurements from NASA's GRACE missions.",
     images: [
-      { src: "/showcase/grace-map.png", alt: "Aquifer region with GRACE total water storage anomaly overlay" },
-      { src: "/showcase/grace-timeseries.png", alt: "20-year groundwater anomaly time series with uncertainty bands" },
+      { src: "/showcase/grace-map.png", alt: "Aquifer region with GRACE total water storage anomaly overlay", w: 2121, h: 825 },
+      { src: "/showcase/grace-timeseries.png", alt: "20-year groundwater anomaly time series with uncertainty bands", w: 1988, h: 482 },
     ],
   },
 };
@@ -42,6 +42,7 @@ function createAppShowcase(app, index) {
           .map(
             (img) => `
           <img src="${img.src}" alt="${img.alt}" loading="lazy"
+            ${img.w ? `width="${img.w}" height="${img.h}"` : ""}
             class="w-full rounded-2xl overflow-hidden" />
         `,
           )
@@ -144,12 +145,33 @@ export function renderAppsGrid() {
 
 export function renderLandingPage() {
   return `
+    <div class="ticker-ribbon -mx-6 overflow-hidden bg-slate-800 dark:bg-slate-950 py-2 mb-8" aria-hidden="true">
+      <div class="ticker-track flex gap-12 whitespace-nowrap text-xs font-mono tracking-wider text-slate-400">
+        <span>47° 22' 41" N, 8° 32' 33" E · ZURICH</span>
+        <span>GLOBAL WATER INTELLIGENCE</span>
+        <span>23° 33' 0" S, 46° 38' 0" W · SÃO PAULO</span>
+        <span>7M+ RIVER REACHES</span>
+        <span>35° 41' 22" N, 139° 41' 30" E · TOKYO</span>
+        <span>DAILY FORECASTS</span>
+        <span>30° 2' 44" N, 31° 14' 8" E · CAIRO</span>
+        <span>DATA BACK TO 1940</span>
+        <span>47° 22' 41" N, 8° 32' 33" E · ZURICH</span>
+        <span>GLOBAL WATER INTELLIGENCE</span>
+        <span>23° 33' 0" S, 46° 38' 0" W · SÃO PAULO</span>
+        <span>7M+ RIVER REACHES</span>
+        <span>35° 41' 22" N, 139° 41' 30" E · TOKYO</span>
+        <span>DAILY FORECASTS</span>
+        <span>30° 2' 44" N, 31° 14' 8" E · CAIRO</span>
+        <span>DATA BACK TO 1940</span>
+      </div>
+    </div>
+
     <section class="scroll-section -mx-6 py-0">
       <div class="scroll-reveal relative overflow-hidden rounded-2xl" data-anim="scale">
         <img src="/showcase/hero-river-flow.jpg"
           alt="Aerial view of braided river delta patterns in Iceland"
-          loading="eager"
-          class="w-full h-[50vh] md:h-[65vh] object-cover" />
+          loading="eager" width="1920" height="1080"
+          class="w-full h-[60vh] md:h-[80vh] object-cover" />
         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12">
           <p class="font-display text-2xl md:text-4xl text-white max-w-3xl leading-snug mb-3">
@@ -162,26 +184,37 @@ export function renderLandingPage() {
       </div>
     </section>
 
-    <section class="scroll-section py-6 md:py-10">
+    <section class="scroll-section py-10 md:py-16">
       <div class="relative">
         <div class="scroll-reveal" data-anim="slide" data-anim-dir="left">
-          <div class="aspect-[16/9] rounded-2xl overflow-hidden md:w-[82%]">
+          <div class="aspect-[16/9] rounded-2xl overflow-hidden md:w-[82%] perspective-panel perspective-panel-left">
             <img src="/showcase/hydrosos-global.png"
               alt="Global hydrological status map showing water conditions across all continents"
-              loading="eager"
+              loading="eager" width="1594" height="897"
               class="w-full h-full object-cover" />
           </div>
           <p class="mt-3 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600">Global water status layers</p>
         </div>
         <div class="scroll-reveal relative z-10 -mt-16 md:-mt-24 ml-auto w-[70%] md:w-[55%]" data-anim="slide" data-anim-dir="right">
-          <div class="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl">
+          <div class="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl perspective-panel perspective-panel-right">
             <img src="/showcase/grace-map.png"
               alt="Aquifer region with GRACE total water storage anomaly overlay"
-              loading="lazy"
+              loading="lazy" width="2121" height="825"
               class="w-full h-full object-cover object-left" />
           </div>
           <p class="mt-3 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 text-right">Groundwater storage</p>
         </div>
+      </div>
+    </section>
+
+    <section class="scroll-section py-16 md:py-24">
+      <div class="scroll-reveal max-w-4xl mx-auto text-center" data-anim="scale">
+        <p class="font-display text-3xl md:text-5xl text-slate-800 dark:text-white leading-tight">
+          Don't just monitor water.
+        </p>
+        <p class="font-display text-3xl md:text-5xl text-blue-600 dark:text-blue-400 leading-tight">
+          Understand it.
+        </p>
       </div>
     </section>
 
@@ -192,9 +225,9 @@ export function renderLandingPage() {
         <div class="flex flex-col md:flex-row items-center gap-10 md:gap-14">
           <div class="scroll-reveal flex-1 min-w-0 space-y-4" data-anim="slide" data-anim-dir="left">
             <img src="/showcase/aquiferx-map.png" alt="Well locations and aquifer boundaries with water table elevation mapping"
-              loading="lazy" class="w-full rounded-2xl overflow-hidden" />
+              loading="lazy" width="1750" height="864" class="w-full rounded-2xl overflow-hidden" />
             <img src="/showcase/aquiferx-chart.png" alt="Water table elevation time series with interpolation and trend analysis"
-              loading="lazy" class="w-full rounded-2xl overflow-hidden" />
+              loading="lazy" width="1747" height="545" class="w-full rounded-2xl overflow-hidden" />
           </div>
           <div class="scroll-reveal md:text-left md:w-[380px] shrink-0" data-anim="slide" data-anim-dir="right">
             <div class="flex items-center gap-2 mb-4">

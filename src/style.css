@@ -135,6 +135,36 @@ body {
     radial-gradient(at 50% 100%, rgba(30, 64, 175, 0.2) 0, transparent 50%);
 }
 
+.ticker-ribbon {
+  --ticker-speed: 30s;
+}
+
+.ticker-track {
+  animation: ticker-scroll var(--ticker-speed) linear infinite;
+  width: max-content;
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.perspective-panel {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.perspective-panel-left {
+  transform: perspective(1200px) rotateY(3deg);
+}
+
+.perspective-panel-right {
+  transform: perspective(1200px) rotateY(-3deg);
+}
+
+.perspective-panel:hover {
+  transform: perspective(1200px) rotateY(0deg);
+}
+
 .scroll-reveal {
   opacity: 0;
 }
@@ -152,6 +182,15 @@ body {
   .scroll-reveal,
   .scroll-reveal[data-anim="cascade"] > * {
     opacity: 1;
+    transform: none;
+  }
+
+  .ticker-track {
+    animation: none;
+  }
+
+  .perspective-panel-left,
+  .perspective-panel-right {
     transform: none;
   }
 }

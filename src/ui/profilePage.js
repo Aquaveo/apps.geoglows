@@ -80,7 +80,7 @@ function renderViewMode(state) {
             ${escape(initials)}
           </div>
           <div>
-            <h3 class="text-2xl font-bold text-slate-800 dark:text-white">${escape(name)}</h3>
+            <h3 class="font-display text-2xl text-slate-800 dark:text-white">${escape(name)}</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400">${escape(email)}</p>
           </div>
         </div>
@@ -161,7 +161,7 @@ function renderEditMode(state) {
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
           <label for="profilePhone" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Phone number</label>
-          <input id="profilePhone" name="phone_number" type="tel" autocomplete="tel" ${pending ? "disabled" : ""}
+          <input id="profilePhone" name="phone_number" type="tel" autocomplete="tel" placeholder="+1 555 0100" ${pending ? "disabled" : ""}
             value="${escape(profile.phone_number ?? "")}"
             class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
@@ -177,7 +177,7 @@ function renderEditMode(state) {
 
       <div>
         <label for="profileAddress" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Address</label>
-        <textarea id="profileAddress" name="address" autocomplete="street-address" ${pending ? "disabled" : ""}
+        <textarea id="profileAddress" name="address" autocomplete="street-address" placeholder="City, Country" ${pending ? "disabled" : ""}
           class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[60px] resize-y">${escape(profile.address ?? "")}</textarea>
       </div>
 
@@ -233,6 +233,11 @@ export function renderProfilePage(state) {
           Manage your GEOGLOWS account details. Your information is private to you.
         </p>
       </div>
+      ${state.profileSaveSuccess ? `
+        <div role="status" class="mb-6 px-4 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm">
+          Profile updated successfully.
+        </div>
+      ` : ""}
       ${editing ? "" : renderCompletionBanner(state)}
       ${editing ? renderEditMode(state) : renderViewMode(state)}
     </section>

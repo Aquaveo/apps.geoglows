@@ -92,7 +92,9 @@ export function bindWorkspaceEvents(setState) {
           account,
           action: null,
           profileEditing: false,
+          profileSaveSuccess: true,
         });
+        setTimeout(() => setState({ profileSaveSuccess: false }), 3000);
       } catch (error) {
         console.error("Profile update failed:", error);
         setState({

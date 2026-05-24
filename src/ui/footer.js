@@ -4,7 +4,7 @@ const { contributors: CONTRIBUTORS, sponsors: SPONSORS } = config;
 
 export function renderFooter() {
   return `
-    <footer class="mt-12 border-t border-slate-200 dark:border-slate-800 pt-10 pb-8 px-4 bg-white/50 dark:bg-transparent">
+    <footer class="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10 pb-8 px-4 bg-white/50 dark:bg-transparent">
       <div class="max-w-6xl mx-auto text-center">
 
         <div class="mb-10 flex flex-col items-center">

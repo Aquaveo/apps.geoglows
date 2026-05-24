@@ -44,6 +44,7 @@ const appState = {
   currentPage: pageFromHash(window.location.hash),
   profileEditing: false,
   profileBannerDismissed: false,
+  profileSaveSuccess: false,
   // 'pending' | 'accepted' — see src/disclaimer.js. Informative
   // notice; no rejection path (deferred to a future plan).
   disclaimerStatus: getDisclaimerStatus(),
@@ -83,7 +84,7 @@ function render(state) {
 
   appEl.innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
-      <header class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-12">
+      <header class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-12 md:py-20">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center relative">
           <nav class="absolute right-6 top-0 flex items-center gap-4" aria-label="Site navigation">
             <a
@@ -111,8 +112,8 @@ function render(state) {
             <span class="hero-heading">Global Water Intelligence</span>
           </h1>
 
-          <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-medium leading-relaxed">
-            Empowering individuals and organizations to solve local water challenges with global water intelligence.
+          <p class="text-base text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+            Open-access tools for water science and decision-making.
           </p>
         </div>
       </header>

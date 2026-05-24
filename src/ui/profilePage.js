@@ -1,4 +1,4 @@
-import { escapeHtml as escape, getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
+import { escapeHtml as escape, sanitizeHref, getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
 import { ICONS } from "../icons.js";
 import { isProfileComplete } from "../account.js";
 
@@ -44,11 +44,11 @@ function renderCompletionBanner(state) {
         Your profile is missing your name. Complete it so we can address you correctly.
       </div>
       <button type="button" id="profileBannerDismiss"
-        class="px-3 py-1.5 rounded-lg text-sm font-medium text-amber-900 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors">
+        class="px-3 py-1.5 min-h-[44px] rounded-lg text-sm font-medium text-amber-900 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
         Dismiss
       </button>
       <button type="button" id="profileBannerComplete"
-        class="px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors">
+        class="px-3 py-1.5 min-h-[44px] rounded-lg text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2">
         Complete profile
       </button>
     </div>
@@ -64,28 +64,28 @@ function renderViewMode(state) {
     ? USER_TYPE_LABELS[profile.user_type] ?? profile.user_type
     : null;
 
-  const userLinkRow = profile?.user_link
+  const safeLink = profile?.user_link ? sanitizeHref(profile.user_link) : null;
+  const userLinkRow = safeLink
     ? fieldRow(
         "Personal link",
-        `<a href="${escape(profile.user_link)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${escape(profile.user_link)}</a>`,
+        `<a href="${escape(safeLink)}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">${escape(profile.user_link)}</a>`,
       )
     : field("Personal link", null, { empty: "—" });
 
   return `
-    <div class="glass-card rounded-3xl p-6 md:p-8 shadow-sm">
+    <div class="glass-card rounded-2xl p-6 md:p-8 shadow-sm">
       <div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div class="flex items-center gap-4">
-          <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-400 text-white text-xl font-bold flex items-center justify-center shadow-sm">
+          <div class="w-16 h-16 rounded-2xl bg-blue-600 text-white text-xl font-bold flex items-center justify-center shadow-sm">
             ${escape(initials)}
           </div>
           <div>
-            <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Profile</p>
-            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">${escape(name)}</h2>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-white">${escape(name)}</h3>
             <p class="text-sm text-slate-600 dark:text-slate-400">${escape(email)}</p>
           </div>
         </div>
         <button type="button" id="profileEditButton"
-          class="self-start px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm transition-colors">
+          class="self-start px-4 py-2 min-h-[44px] rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
           Edit profile
         </button>
       </div>
@@ -121,9 +121,9 @@ function renderEditMode(state) {
   ).join("");
 
   return `
-    <form id="profileEditForm" novalidate class="glass-card rounded-3xl p-6 md:p-8 shadow-sm space-y-5">
+    <form id="profileEditForm" novalidate class="glass-card rounded-2xl p-6 md:p-8 shadow-sm space-y-5">
       <div>
-        <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Edit profile</h2>
+        <h2 class="font-display text-2xl text-slate-800 dark:text-white">Edit profile</h2>
         <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Update your information. Your account email is shown below and cannot be changed here.</p>
       </div>
 
@@ -190,11 +190,11 @@ function renderEditMode(state) {
 
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" id="profileEditCancel" ${pending ? "disabled" : ""}
-          class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60">
+          class="px-4 py-2 min-h-[44px] rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold transition-colors hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
           Cancel
         </button>
         <button type="submit" ${pending ? "disabled" : ""}
-          class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold shadow-sm transition-colors">
+          class="px-4 py-2 min-h-[44px] rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
           ${pending ? "Saving…" : "Save changes"}
         </button>
       </div>
@@ -210,13 +210,13 @@ export function renderProfilePage(state) {
           ${ICONS.droplet}
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Sign in to view your profile</h2>
+          <h2 class="font-display text-2xl text-slate-800 dark:text-white mb-2">Sign in to view your profile</h2>
           <p class="text-slate-600 dark:text-slate-400 max-w-sm">
             Create an account or sign in to manage your GEOGLOWS profile.
           </p>
         </div>
         <button id="signIn"
-          class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm transition-colors">
+          class="px-6 py-3 min-h-[44px] rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
           Sign in
         </button>
       </div>
@@ -228,10 +228,9 @@ export function renderProfilePage(state) {
   return `
     <section>
       <div class="mb-5">
-        <p class="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Profile</p>
-        <h2 class="text-3xl font-bold text-slate-800 dark:text-white">Your Profile</h2>
+        <h2 class="font-display text-3xl text-slate-800 dark:text-white">Your Profile</h2>
         <p class="mt-2 text-slate-600 dark:text-slate-400 max-w-2xl">
-          Manage your GEOGloWS account details. Your information is private to you.
+          Manage your GEOGLOWS account details. Your information is private to you.
         </p>
       </div>
       ${editing ? "" : renderCompletionBanner(state)}

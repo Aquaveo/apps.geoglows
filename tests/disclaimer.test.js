@@ -125,7 +125,7 @@ describe("mountDisclaimerModal", () => {
   it("renders the disclaimer title and the first sentence of the body text", () => {
     mountDisclaimerModal({ onAccept: vi.fn() });
     const dialog = document.getElementById("geoglows-disclaimer-modal");
-    expect(dialog.innerHTML).toContain("Disclaimers");
+    expect(dialog.innerHTML).toContain("Before you begin");
     expect(dialog.innerHTML).toContain(
       "The data and methods presented are generated from research areas under active development",
     );

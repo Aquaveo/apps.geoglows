@@ -24,7 +24,7 @@ import {
   mountDisclaimerModal,
 } from "./disclaimer.js";
 import { ICONS } from "./icons.js";
-import { renderAppsPage } from "./ui/appsPage.js";
+import { renderLandingPage, renderAppsGrid, initScrollAnimations } from "./ui/landingPage.js";
 import { renderProfilePage } from "./ui/profilePage.js";
 import { renderFooter } from "./ui/footer.js";
 
@@ -62,54 +62,68 @@ function setState(patch) {
 function render(state) {
   const appEl = document.querySelector("#app");
 
-  // Disclaimer-pending with the modal currently open: render an empty #app
-  // so the apps catalog doesn't flash behind the modal backdrop. The normal
-  // catalog/profile render resumes once the user acknowledges.
   if (state.disclaimerStatus === "pending" && disclaimerModal) {
-    appEl.innerHTML = "";
+    appEl.innerHTML = `
+      <div class="min-h-screen water-mesh flex items-center justify-center">
+        <div class="text-center opacity-30">
+          <div class="flex items-center justify-center gap-3">
+            ${ICONS.droplet}
+            <span class="font-bold text-xl tracking-wider text-blue-600 dark:text-slate-400 uppercase">GEOGLOWS</span>
+          </div>
+        </div>
+      </div>
+    `;
     return;
   }
 
   const isApps = state.currentPage !== "profile";
 
+  const isDark = document.documentElement.classList.contains("dark");
+  const themeIcon = isDark ? ICONS.sun : ICONS.moon;
+
   appEl.innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
-      <nav class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-12">
+      <header class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-12">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center relative">
-          <div class="absolute right-6 top-0 flex items-center gap-4">
+          <nav class="absolute right-6 top-0 flex items-center gap-4" aria-label="Site navigation">
             <a
               href="#apps"
-              class="text-sm font-semibold transition-colors ${isApps ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}"
+              class="text-sm font-semibold transition-colors rounded-lg py-1 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${isApps ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}"
             >
               App Library
             </a>
             ${renderAuthAction(state)}
             <button
               id="theme-toggle"
-              class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors"
-              aria-label="Toggle theme"
+              class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              aria-label="${isDark ? "Switch to light mode" : "Switch to dark mode"}"
             >
-              ${ICONS.moon}
+              ${themeIcon}
             </button>
-          </div>
+          </nav>
 
           <div class="flex items-center gap-3 mb-6">
             ${ICONS.droplet}
             <span class="font-bold text-xl tracking-wider text-blue-600 dark:text-slate-400 uppercase">GEOGLOWS</span>
           </div>
 
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-4 leading-tight">
-            <span class="gradient-text">Global Water Intelligence</span>
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-normal tracking-tight mb-4 leading-tight">
+            <span class="hero-heading">Global Water Intelligence</span>
           </h1>
 
           <p class="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-medium leading-relaxed">
             Empowering individuals and organizations to solve local water challenges with global water intelligence.
           </p>
         </div>
-      </nav>
+      </header>
 
-      <main class="max-w-7xl mx-auto px-6 py-10 grow w-full">
-        ${isApps ? renderAppsPage() : renderProfilePage(state)}
+      <main id="main-content" class="max-w-7xl mx-auto px-6 py-10 grow w-full">
+        ${state.status === "error" ? `
+          <div role="alert" class="mb-6 px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm">
+            ${state.error}
+          </div>
+        ` : ""}
+        ${isApps ? (state.user ? renderAppsGrid() : renderLandingPage()) : renderProfilePage(state)}
       </main>
 
       ${renderFooter()}
@@ -123,6 +137,7 @@ function renderApp() {
   render(appState);
   bindWorkspaceEvents(setState);
   updateThemeIcon();
+  if (appState.currentPage !== "profile" && !appState.user) initScrollAnimations();
 }
 
 async function runBootstrap() {
@@ -264,6 +279,7 @@ async function initApp() {
         `Bootstrap after ${reason} failed:`,
         error instanceof Error ? error.message : error,
       );
+      setState({ status: "error", error: "Unable to connect. Please refresh the page or try again later." });
     });
   }
 

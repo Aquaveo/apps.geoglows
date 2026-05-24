@@ -1,17 +1,6 @@
 {
   "apps": [
     {
-      "id": "gwdm",
-      "type": "app",
-      "name": "Aquifer Analyst",
-      "description": "Map and analyze your groundwater well locations and observations locally and privately on your browser.",
-      "path": "/aquifer-analyst",
-      "tags": ["Mapping", "Analytics", "In-situ Data"],
-      "iconClass": "text-indigo-400",
-      "iconName": "folded-map",
-      "disabled": false
-    },
-    {
       "id": "rfs",
       "type": "app",
       "name": "Hydroviewer RFS v2",

@@ -46,9 +46,8 @@ describe("renderProfilePage — signed-out", () => {
 describe("renderProfilePage — view mode (signed in)", () => {
   it("renders the user's display name and email in the header", () => {
     const dom = render(buildState());
-    // Two <h2>: the section title ("Your Profile") and the user's name.
-    const headings = [...dom.querySelectorAll("h2")].map((h) => h.textContent);
-    expect(headings).toContain("Ada Lovelace");
+    const nameHeading = dom.querySelector("h3");
+    expect(nameHeading.textContent).toBe("Ada Lovelace");
     expect(dom.textContent).toContain("ada@example.com");
   });
 

@@ -103,4 +103,11 @@ export function bindWorkspaceEvents(setState) {
     });
 
   document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
+
+  document.addEventListener("click", (e) => {
+    const details = document.querySelector(".geoglows-auth-action-avatar-wrapper");
+    if (details && details.open && !details.contains(e.target)) {
+      details.open = false;
+    }
+  });
 }

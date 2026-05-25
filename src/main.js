@@ -32,6 +32,7 @@ function pageFromHash(hash) {
   // Accept the legacy #workspace anchor as a synonym for #profile so
   // bookmarks from the previous Cognito-era app keep working.
   if (hash === "#profile" || hash === "#workspace") return "profile";
+  if (hash === "#home") return "home";
   return "apps";
 }
 
@@ -78,6 +79,7 @@ function render(state) {
   }
 
   const isApps = state.currentPage !== "profile";
+  const showLanding = state.currentPage === "home" || (!state.user && isApps);
 
   const isDark = document.documentElement.classList.contains("dark");
   const themeIcon = isDark ? ICONS.sun : ICONS.moon;
@@ -86,10 +88,10 @@ function render(state) {
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
       <header class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-20">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center relative">
-          <div class="flex items-center gap-3 mb-4 md:mb-6">
+          <a href="#home" class="flex items-center gap-3 mb-4 md:mb-6 no-underline hover:opacity-80 transition-opacity">
             ${ICONS.droplet}
             <span class="font-bold text-xl tracking-wider text-blue-600 dark:text-slate-400 uppercase">GEOGLOWS</span>
-          </div>
+          </a>
 
           <nav class="flex items-center gap-3 md:gap-4 mb-6 md:mb-0 md:absolute md:right-6 md:top-0" aria-label="Site navigation">
             ${renderAuthAction(state)}
@@ -118,7 +120,7 @@ function render(state) {
             ${state.error}
           </div>
         ` : ""}
-        ${isApps ? (state.user ? renderAppsGrid() : renderLandingPage()) : renderProfilePage(state)}
+        ${isApps ? (showLanding ? renderLandingPage() : renderAppsGrid()) : renderProfilePage(state)}
       </main>
 
       ${renderFooter()}
@@ -132,7 +134,7 @@ function renderApp() {
   render(appState);
   bindWorkspaceEvents(setState);
   updateThemeIcon();
-  if (appState.currentPage !== "profile" && !appState.user) initScrollAnimations();
+  if (appState.currentPage === "home" || (appState.currentPage !== "profile" && !appState.user)) initScrollAnimations();
 }
 
 async function runBootstrap() {

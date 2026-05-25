@@ -2,6 +2,7 @@ import { animate, onScroll, stagger, createScope } from "animejs";
 import config from "../../apps.json";
 import { ICONS } from "../icons.js";
 import { getAppIcon } from "../appIcons.js";
+import { getRecentApps } from "../recentApps.js";
 
 const { apps: APPS } = config;
 const visibleApps = APPS.filter((a) => !a.hidden && !a.disabled);
@@ -98,7 +99,7 @@ function createAppCard(app) {
     app.type === "external" ? ' target="_blank" rel="noopener noreferrer"' : "";
 
   return `
-    <a href="${href}"${target}
+    <a href="${href}"${target} data-app-id="${app.id}"
       class="glass-card p-5 md:p-8 rounded-2xl flex flex-col group relative overflow-hidden hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
       <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
         ${ICONS.arrowUpRight}
@@ -127,8 +128,27 @@ function createAppCard(app) {
   `;
 }
 
+function renderRecentApps() {
+  const recent = getRecentApps();
+  if (!recent.length) return "";
+  const recentCards = recent
+    .map((r) => visibleApps.find((a) => a.id === r.id))
+    .filter(Boolean)
+    .map(createAppCard);
+  if (!recentCards.length) return "";
+  return `
+    <section class="mb-10">
+      <h2 class="font-display text-2xl text-slate-800 dark:text-white mb-4">Recent Apps</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        ${recentCards.join("")}
+      </div>
+    </section>
+  `;
+}
+
 export function renderAppsGrid() {
   return `
+    ${renderRecentApps()}
     <section>
       <div class="mb-6">
         <h2 class="font-display text-3xl text-slate-800 dark:text-white">

@@ -1,6 +1,7 @@
 import { signInRedirect, signOutRedirect } from "./auth.js";
 import { loadAccountSummary, updateProfile } from "./account.js";
 import { toggleTheme } from "./theme.js";
+import { recordAppVisit } from "./recentApps.js";
 
 export function bindWorkspaceEvents(setState) {
   document.getElementById("geoglowsSignIn")?.addEventListener("click", async () => {
@@ -105,6 +106,12 @@ export function bindWorkspaceEvents(setState) {
     });
 
   document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
+
+  for (const card of document.querySelectorAll("[data-app-id]")) {
+    card.addEventListener("click", () => {
+      recordAppVisit(card.dataset.appId);
+    });
+  }
 
   document.addEventListener("click", (e) => {
     const details = document.querySelector(".geoglows-auth-action-avatar-wrapper");

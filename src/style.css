@@ -149,20 +149,22 @@ body {
   100% { transform: translateX(-50%); }
 }
 
-.perspective-panel {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
+@media (min-width: 768px) {
+  .perspective-panel {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
-.perspective-panel-left {
-  transform: perspective(1200px) rotateY(3deg);
-}
+  .perspective-panel-left {
+    transform: perspective(1200px) rotateY(3deg);
+  }
 
-.perspective-panel-right {
-  transform: perspective(1200px) rotateY(-3deg);
-}
+  .perspective-panel-right {
+    transform: perspective(1200px) rotateY(-3deg);
+  }
 
-.perspective-panel:hover {
-  transform: perspective(1200px) rotateY(0deg);
+  .perspective-panel:hover {
+    transform: perspective(1200px) rotateY(0deg);
+  }
 }
 
 .scroll-reveal {

@@ -41,9 +41,11 @@ function createAppShowcase(app, index) {
         ${images
           .map(
             (img) => `
-          <img src="${img.src}" alt="${img.alt}" loading="lazy"
-            ${img.w ? `width="${img.w}" height="${img.h}"` : ""}
-            class="w-full rounded-2xl overflow-hidden" />
+          <div class="aspect-[4/3] md:aspect-auto rounded-2xl overflow-hidden">
+            <img src="${img.src}" alt="${img.alt}" loading="lazy"
+              ${img.w ? `width="${img.w}" height="${img.h}"` : ""}
+              class="w-full h-full object-cover md:h-auto md:object-contain" />
+          </div>
         `,
           )
           .join("")}
@@ -58,11 +60,11 @@ function createAppShowcase(app, index) {
     `;
 
   return `
-    <section class="scroll-section min-h-[80vh] flex items-center px-6 py-20">
+    <section class="scroll-section md:min-h-[80vh] md:flex md:items-center px-6 py-12 md:py-20">
       <div class="max-w-6xl mx-auto w-full">
         <div class="flex flex-col ${isEven ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-10 md:gap-14">
           ${imagesHtml}
-          <div class="scroll-reveal ${isEven ? "md:text-left" : "md:text-right"} md:w-[380px] shrink-0" data-anim="slide" data-anim-dir="${textDir}">
+          <div class="scroll-reveal text-left ${isEven ? "md:text-left" : "md:text-right"} md:w-[380px] shrink-0" data-anim="slide" data-anim-dir="${textDir}">
             <div class="flex items-center gap-2 mb-4 ${isEven ? "" : "md:justify-end"}">
               <div class="p-2 rounded-xl ${app.iconClass} bg-blue-50 dark:bg-blue-500/10">
                 ${iconSvg}
@@ -71,7 +73,7 @@ function createAppShowcase(app, index) {
                 ${app.tags[0] || "Tool"}
               </p>
             </div>
-            <h2 class="font-display text-3xl md:text-4xl font-normal text-slate-800 dark:text-white mb-4">
+            <h2 class="font-display text-2xl md:text-4xl font-normal text-slate-800 dark:text-white mb-3 md:mb-4">
               ${app.name}
             </h2>
             <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
@@ -97,7 +99,7 @@ function createAppCard(app) {
 
   return `
     <a href="${href}"${target}
-      class="glass-card p-6 md:p-8 rounded-2xl flex flex-col group relative overflow-hidden hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+      class="glass-card p-5 md:p-8 rounded-2xl flex flex-col group relative overflow-hidden hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
       <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
         ${ICONS.arrowUpRight}
       </div>
@@ -174,10 +176,10 @@ export function renderLandingPage() {
           class="w-full h-[60vh] md:h-[80vh] object-cover" />
         <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12">
-          <p class="font-display text-2xl md:text-4xl text-white max-w-3xl leading-snug mb-3">
+          <p class="font-display text-xl md:text-4xl text-white max-w-3xl leading-snug mb-2 md:mb-3">
             Advancing global water sustainability through open Earth observation data.
           </p>
-          <p class="text-sm md:text-base text-white/70 max-w-xl">
+          <p class="text-xs md:text-base text-white/70 max-w-xl">
             7 million river reaches. Daily forecasts. Historical streamflow data back to 1940.
           </p>
         </div>
@@ -187,7 +189,7 @@ export function renderLandingPage() {
     <section class="scroll-section py-10 md:py-16">
       <div class="relative">
         <div class="scroll-reveal" data-anim="slide" data-anim-dir="left">
-          <div class="aspect-[16/9] rounded-2xl overflow-hidden md:w-[82%] perspective-panel perspective-panel-left">
+          <div class="aspect-[16/9] rounded-2xl overflow-hidden w-full md:w-[82%] md:perspective-panel md:perspective-panel-left">
             <img src="/showcase/hydrosos-global.png"
               alt="Global hydrological status map showing water conditions across all continents"
               loading="eager" width="1594" height="897"
@@ -195,8 +197,8 @@ export function renderLandingPage() {
           </div>
           <p class="mt-3 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600">Global water status layers</p>
         </div>
-        <div class="scroll-reveal relative z-10 -mt-16 md:-mt-24 ml-auto w-[70%] md:w-[55%]" data-anim="slide" data-anim-dir="right">
-          <div class="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl perspective-panel perspective-panel-right">
+        <div class="scroll-reveal relative z-10 mt-4 md:-mt-24 md:ml-auto w-full md:w-[55%]" data-anim="slide" data-anim-dir="right">
+          <div class="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl md:perspective-panel md:perspective-panel-right">
             <img src="/showcase/grace-map.png"
               alt="Aquifer region with GRACE total water storage anomaly overlay"
               loading="lazy" width="2121" height="825"
@@ -207,12 +209,12 @@ export function renderLandingPage() {
       </div>
     </section>
 
-    <section class="scroll-section py-16 md:py-24">
-      <div class="scroll-reveal max-w-4xl mx-auto text-center" data-anim="scale">
-        <p class="font-display text-3xl md:text-5xl text-slate-800 dark:text-white leading-tight">
+    <section class="scroll-section py-12 md:py-24">
+      <div class="scroll-reveal max-w-4xl mx-auto text-center px-6" data-anim="scale">
+        <p class="font-display text-2xl md:text-5xl text-slate-800 dark:text-white leading-tight">
           Don't just monitor water.
         </p>
-        <p class="font-display text-3xl md:text-5xl text-blue-600 dark:text-blue-400 leading-tight">
+        <p class="font-display text-2xl md:text-5xl text-blue-600 dark:text-blue-400 leading-tight">
           Understand it.
         </p>
       </div>
@@ -220,14 +222,18 @@ export function renderLandingPage() {
 
     ${visibleApps.map((app, i) => createAppShowcase(app, i)).join("")}
 
-    <section class="scroll-section min-h-[80vh] flex items-center px-6 py-20">
+    <section class="scroll-section md:min-h-[80vh] md:flex md:items-center px-6 py-12 md:py-20">
       <div class="max-w-6xl mx-auto w-full">
         <div class="flex flex-col md:flex-row items-center gap-10 md:gap-14">
           <div class="scroll-reveal flex-1 min-w-0 space-y-4" data-anim="slide" data-anim-dir="left">
-            <img src="/showcase/aquiferx-map.png" alt="Well locations and aquifer boundaries with water table elevation mapping"
-              loading="lazy" width="1750" height="864" class="w-full rounded-2xl overflow-hidden" />
-            <img src="/showcase/aquiferx-chart.png" alt="Water table elevation time series with interpolation and trend analysis"
-              loading="lazy" width="1747" height="545" class="w-full rounded-2xl overflow-hidden" />
+            <div class="aspect-[4/3] md:aspect-auto rounded-2xl overflow-hidden">
+              <img src="/showcase/aquiferx-map.png" alt="Well locations and aquifer boundaries with water table elevation mapping"
+                loading="lazy" width="1750" height="864" class="w-full h-full object-cover md:h-auto md:object-contain" />
+            </div>
+            <div class="aspect-[4/3] md:aspect-auto rounded-2xl overflow-hidden">
+              <img src="/showcase/aquiferx-chart.png" alt="Water table elevation time series with interpolation and trend analysis"
+                loading="lazy" width="1747" height="545" class="w-full h-full object-cover md:h-auto md:object-contain" />
+            </div>
           </div>
           <div class="scroll-reveal md:text-left md:w-[380px] shrink-0" data-anim="slide" data-anim-dir="right">
             <div class="flex items-center gap-2 mb-4">
@@ -235,7 +241,7 @@ export function renderLandingPage() {
                 Coming soon
               </span>
             </div>
-            <h2 class="font-display text-3xl md:text-4xl font-normal text-slate-800 dark:text-white mb-4">
+            <h2 class="font-display text-2xl md:text-4xl font-normal text-slate-800 dark:text-white mb-3 md:mb-4">
               Aquifer Analyst
             </h2>
             <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-4">

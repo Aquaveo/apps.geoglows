@@ -33,38 +33,6 @@ export function renderFooter() {
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row justify-center gap-10 sm:gap-16 mb-10">
-          <div>
-            <p class="text-slate-400 dark:text-slate-600 text-[0.65rem] mb-4 uppercase tracking-[0.2em] font-bold">
-              A Collection of Work From
-            </p>
-            <div class="flex flex-wrap justify-center items-center gap-6">
-              ${CONTRIBUTORS.map(
-                (c) => `
-                <span class="text-slate-700 dark:text-slate-200 font-semibold text-sm">
-                  ${c}
-                </span>
-              `
-              ).join("")}
-            </div>
-          </div>
-
-          <div>
-            <p class="text-slate-400 dark:text-slate-600 text-[0.65rem] mb-4 uppercase tracking-[0.2em] font-bold">
-              Funded By
-            </p>
-            <div class="flex flex-wrap justify-center items-center gap-6">
-              ${SPONSORS.map(
-                (s) => `
-                <span class="text-slate-700 dark:text-slate-200 font-semibold text-sm">
-                  ${s}
-                </span>
-              `
-              ).join("")}
-            </div>
-          </div>
-        </div>
-
         <div class="pt-6 border-t border-slate-200 dark:border-slate-800/60 text-slate-400 dark:text-slate-600 text-xs">
           <p>&copy; ${new Date().getFullYear()} GEOGLOWS. Global Water Intelligence Foundation.</p>
         </div>
@@ -72,3 +40,27 @@ export function renderFooter() {
     </footer>
   `;
 }
+
+/*
+  "A Collection of Work From" and "Funded By" sections — commented out for now:
+
+  <div class="flex flex-col sm:flex-row justify-center gap-10 sm:gap-16 mb-10">
+    <div>
+      <p class="text-slate-400 dark:text-slate-600 text-[0.65rem] mb-4 uppercase tracking-[0.2em] font-bold">
+        A Collection of Work From
+      </p>
+      <div class="flex flex-wrap justify-center items-center gap-6">
+        ${CONTRIBUTORS.map((c) => `<span class="text-slate-700 dark:text-slate-200 font-semibold text-sm">${c}</span>`).join("")}
+      </div>
+    </div>
+
+    <div>
+      <p class="text-slate-400 dark:text-slate-600 text-[0.65rem] mb-4 uppercase tracking-[0.2em] font-bold">
+        Funded By
+      </p>
+      <div class="flex flex-wrap justify-center items-center gap-6">
+        ${SPONSORS.map((s) => `<span class="text-slate-700 dark:text-slate-200 font-semibold text-sm">${s}</span>`).join("")}
+      </div>
+    </div>
+  </div>
+*/

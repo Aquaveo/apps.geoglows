@@ -92,12 +92,6 @@ function render(state) {
           </div>
 
           <nav class="flex items-center gap-3 md:gap-4 mb-6 md:mb-0 md:absolute md:right-6 md:top-0" aria-label="Site navigation">
-            <a
-              href="#apps"
-              class="text-sm font-semibold transition-colors rounded-lg py-1 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${isApps ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}"
-            >
-              App Library
-            </a>
             ${renderAuthAction(state)}
             <button
               id="theme-toggle"

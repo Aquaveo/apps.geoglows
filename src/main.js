@@ -29,10 +29,9 @@ import { renderProfilePage } from "./ui/profilePage.js";
 import { renderFooter } from "./ui/footer.js";
 
 function pageFromHash(hash) {
-  // Accept the legacy #workspace anchor as a synonym for #profile so
-  // bookmarks from the previous Cognito-era app keep working.
   if (hash === "#profile" || hash === "#workspace") return "profile";
   if (hash === "#home") return "home";
+  if (hash === "#library") return "apps";
   return "apps";
 }
 

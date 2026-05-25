@@ -148,7 +148,7 @@ Flat by default. Shadows appear as a response to state (hover, modal elevation),
 - **Editorial overlap** (`shadow-xl`): Used on the GRACE map image when overlapping the HydroSOS map. Creates depth in the layered editorial composition.
 
 ### Perspective Panels
-Editorial image panels use CSS 3D perspective transforms (`perspective(1200px) rotateY(±3deg)`) to create dimensional depth. The HydroSOS map tilts slightly right; the GRACE map tilts slightly left. Hover flattens to 0deg with a 0.5s ease-out-expo transition. Disabled under prefers-reduced-motion.
+Editorial image panels use CSS 3D perspective transforms (`perspective(1200px) rotateY(±3deg)`) to create dimensional depth. The HydroSOS map tilts slightly right; the GRACE map tilts slightly left. Hover flattens to 0deg with a 0.5s ease-out-expo transition. Desktop only (`min-width: 768px`); disabled on mobile and under prefers-reduced-motion.
 
 ### Named Rules
 **The Flat-By-Default Rule.** Surfaces are flat at rest. Shadows appear only as a response to state (hover, focus, modal elevation) or in editorial compositions where images overlap intentionally. Perspective transforms are reserved for the editorial image bridge, never on UI components.
@@ -159,20 +159,28 @@ Editorial image panels use CSS 3D perspective transforms (`perspective(1200px) r
 A full-width dark ribbon (`bg-slate-800`) scrolling continuously with global river station coordinates (Zurich, São Paulo, Tokyo, Cairo) interspersed with data stats ("7M+ RIVER REACHES", "DAILY FORECASTS"). Monospace font, slate-400 text. CSS `translateX` animation at 30s linear infinite. Creates a "mission control" atmosphere. Hidden from screen readers (`aria-hidden="true"`). Disabled under prefers-reduced-motion.
 
 ### Header
-Top-center layout. GEOGLOWS droplet icon + wordmark centered; nav links ("App Library") and auth action positioned absolute top-right. Full-width with backdrop blur (bg-white/80 light, bg-slate-950/80 dark). Bottom border separator. Padding: py-12 mobile, py-20 desktop.
+Top-center layout. GEOGLOWS droplet icon + wordmark centered. Full-width with backdrop blur (bg-white/80 light, bg-slate-950/80 dark). Bottom border separator. Padding: py-8 mobile, py-20 desktop.
+
+**Responsive:** On mobile, nav links flow below the logo in the normal document flow. On desktop (`md:`), nav is absolute-positioned top-right. This prevents the nav from overlapping the centered logo on narrow screens.
 
 ### Hero Bridge (anonymous visitors only)
 Satellite photograph (aerial braided river delta) spanning full content width at 60vh mobile / 80vh desktop. Dark gradient overlay (bottom-to-top, from-slate-900/80) carries the GEOGLOWS mission tagline in Playfair Display and supporting stats in Inter. Scales in on scroll via anime.js. Rounded-2xl container.
 
-Below: two editorial images (HydroSOS global map + GRACE groundwater map) in an overlapping composition with 3D perspective transforms. HydroSOS at 82% width slides from left with 3deg rightward tilt; GRACE at 55% width overlaps its bottom-right and slides from right with 3deg leftward tilt. Both in 16:9 aspect-ratio containers with object-cover. Labels below each image in muted uppercase.
+Below: two editorial images (HydroSOS global map + GRACE groundwater map). Both in 16:9 aspect-ratio containers with object-cover. Labels below each image in muted uppercase.
+
+**Responsive:** On desktop, images overlap editorially (HydroSOS at 82% width, GRACE at 55% overlapping bottom-right with `-mt-24`) with 3D perspective transforms (rotateY ±3deg). On mobile, images stack vertically at full width with normal spacing (`mt-4`), no overlap, no perspective transforms.
 
 ### Manifesto Moment
-A centered typographic statement between the editorial images and the app showcases. Two lines in Playfair Display at text-3xl/text-5xl: first line in dark slate, second line in Workbench Blue. Scales in on scroll. The color split creates a punchy moment that breaks the neutral pattern deliberately. Generous vertical padding (py-16 md:py-24).
+A centered typographic statement between the editorial images and the app showcases. Two lines in Playfair Display: first line in dark slate, second line in Workbench Blue. Scales in on scroll. The color split creates a punchy moment that breaks the neutral pattern deliberately.
+
+**Responsive:** text-2xl on mobile, text-5xl on desktop. Padding: py-12 mobile, py-24 desktop.
 
 ### App Showcases
-Alternating layout: images left / text right, then reversed. Each showcase is a scroll section (min-h-80vh) with anime.js directional slide animations matching the layout direction. Images slide from the image side; text slides from the opposite side. Bidirectional: animations reverse when scrolling back up.
+Alternating layout: images left / text right, then reversed. anime.js directional slide animations matching the layout direction. Bidirectional: animations reverse when scrolling back up.
 
-Text block: icon + category label, Playfair Display heading, Inter description, blue "Open [App]" link.
+Text block: icon + category label, Playfair Display heading (text-2xl mobile, text-4xl desktop), Inter description, blue "Open [App]" link.
+
+**Responsive:** On desktop, sections use `min-h-[80vh]` with flex centering and side-by-side layout. On mobile, sections flow at content height with stacked layout (images above text). Showcase images use `aspect-[4/3]` crop with `object-cover` on mobile for visual substance; natural aspect ratio on desktop. Text is always left-aligned on mobile regardless of alternation direction.
 
 ### Coming Soon Section
 Same alternating showcase layout. Amber "Coming soon" pill (bg-amber-100, text-amber-700) replaces the icon + category label. No link (app not yet available).

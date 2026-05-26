@@ -190,11 +190,11 @@ export function renderLandingPage() {
 
     <section class="scroll-section -mx-6 py-0">
       <div class="scroll-reveal relative overflow-hidden rounded-2xl" data-anim="scale">
-        <img src="/showcase/hero-river-flow.jpg"
-          alt="Aerial view of braided river delta patterns in Iceland"
-          loading="eager" width="1920" height="1080"
+        <img src="/showcase/hero-river-network.png"
+          alt="Global river network map showing GEOGLOWS streamflow monitoring coverage across all continents"
+          loading="eager" width="1626" height="887"
           class="w-full h-[60vh] md:h-[80vh] object-cover" />
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-800/90 via-slate-800/30 to-transparent"></div>
         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-12">
           <p class="font-display text-xl md:text-4xl text-white max-w-3xl leading-snug mb-2 md:mb-3">
             Advancing global water sustainability through open Earth observation data.
@@ -206,25 +206,18 @@ export function renderLandingPage() {
       </div>
     </section>
 
-    <section class="scroll-section py-10 md:py-16">
-      <div class="relative">
-        <div class="scroll-reveal" data-anim="slide" data-anim-dir="left">
-          <div class="aspect-[16/9] rounded-2xl overflow-hidden w-full md:w-[82%] md:perspective-panel md:perspective-panel-left">
-            <img src="/showcase/hydrosos-global.png"
-              alt="Global hydrological status map showing water conditions across all continents"
-              loading="eager" width="1594" height="897"
-              class="w-full h-full object-cover" />
-          </div>
-          <p class="mt-3 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600">Global water status layers</p>
+    <section class="scroll-section px-6 py-12">
+      <div class="max-w-5xl mx-auto">
+        <div class="scroll-reveal mb-8" data-anim="slide" data-anim-dir="left">
+          <h2 class="font-display text-3xl text-slate-800 dark:text-white mb-2">
+            Explore the tools
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 max-w-xl">
+            Choose a tool and begin exploring. Create an account for personalized features.
+          </p>
         </div>
-        <div class="scroll-reveal relative z-10 mt-4 md:-mt-24 md:ml-auto w-full md:w-[55%]" data-anim="slide" data-anim-dir="right">
-          <div class="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl md:perspective-panel md:perspective-panel-right">
-            <img src="/showcase/grace-map.png"
-              alt="Aquifer region with GRACE total water storage anomaly overlay"
-              loading="lazy" width="2121" height="825"
-              class="w-full h-full object-cover object-left" />
-          </div>
-          <p class="mt-3 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 text-right">Groundwater storage</p>
+        <div class="scroll-reveal grid grid-cols-1 md:grid-cols-2 gap-6" data-anim="cascade">
+          ${visibleApps.map(createAppCard).join("")}
         </div>
       </div>
     </section>
@@ -271,22 +264,6 @@ export function renderLandingPage() {
               Currently in development. Stay tuned for the public release.
             </p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="scroll-section px-6 py-16">
-      <div class="max-w-5xl mx-auto">
-        <div class="scroll-reveal mb-10">
-          <h2 class="font-display text-3xl text-slate-800 dark:text-white mb-2">
-            Get started
-          </h2>
-          <p class="text-slate-600 dark:text-slate-400 max-w-xl">
-            Choose a tool and begin exploring. Create an account for personalized features.
-          </p>
-        </div>
-        <div class="scroll-reveal grid grid-cols-1 md:grid-cols-2 gap-6" data-anim="cascade">
-          ${visibleApps.map(createAppCard).join("")}
         </div>
       </div>
     </section>

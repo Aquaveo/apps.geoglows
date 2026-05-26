@@ -83,16 +83,30 @@ function render(state) {
   const isDark = document.documentElement.classList.contains("dark");
   const themeIcon = isDark ? ICONS.sun : ICONS.moon;
 
+  const compactHeader = !showLanding;
+
   appEl.innerHTML = `
     <div class="min-h-screen text-slate-800 dark:text-slate-200 water-mesh flex flex-col">
-      <header class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 py-8 md:py-20">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center relative">
-          <a href="#home" class="flex items-center gap-3 mb-4 md:mb-6 no-underline hover:opacity-80 transition-opacity">
+      <header class="w-full z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 ${compactHeader ? "py-4 md:py-5" : "py-8 md:py-20"}">
+        <div class="max-w-7xl mx-auto px-6 ${compactHeader ? "flex items-center justify-between" : "flex flex-col items-center text-center relative"}">
+          <a href="/#home" class="flex items-center gap-3 ${compactHeader ? "" : "mb-4 md:mb-6"} hover:opacity-80 transition-opacity">
             ${ICONS.droplet}
             <span class="font-bold text-xl tracking-wider text-blue-600 dark:text-slate-400 uppercase">GEOGLOWS</span>
           </a>
 
-          <nav class="flex items-center gap-3 md:gap-4 mb-6 md:mb-0 md:absolute md:right-6 md:top-0" aria-label="Site navigation">
+          <nav class="flex items-center gap-3 md:gap-4 ${compactHeader ? "" : "mb-6 md:mb-0 md:absolute md:right-6 md:top-0"}" aria-label="Site navigation">
+            ${state.user ? `
+              <a href="/#library"
+                class="text-sm font-medium transition-colors rounded-lg py-1 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${isApps && !showLanding ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}">
+                Library
+              </a>
+              ${compactHeader ? `
+                <a href="/#profile"
+                  class="text-sm font-medium transition-colors rounded-lg py-1 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${!isApps ? "text-slate-800 dark:text-white" : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"}">
+                  Profile
+                </a>
+              ` : ""}
+            ` : ""}
             ${renderAuthAction(state)}
             <button
               id="theme-toggle"
@@ -103,13 +117,14 @@ function render(state) {
             </button>
           </nav>
 
-          <h1 class="text-3xl md:text-6xl lg:text-7xl font-normal tracking-tight mb-3 md:mb-4 leading-tight">
-            <span class="hero-heading">Global Water Intelligence</span>
-          </h1>
-
-          <p class="text-base text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
-            Open-access tools for water science and decision-making.
-          </p>
+          ${showLanding ? `
+            <h1 class="text-3xl md:text-6xl lg:text-7xl font-normal tracking-tight mb-3 md:mb-4 leading-tight">
+              <span class="hero-heading">Global Water Intelligence</span>
+            </h1>
+            <p class="text-base text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+              Open-access tools for water science and decision-making.
+            </p>
+          ` : ""}
         </div>
       </header>
 

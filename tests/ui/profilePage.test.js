@@ -19,7 +19,6 @@ function buildState(overrides = {}) {
       },
     },
     profileEditing: false,
-    profileBannerDismissed: false,
     action: null,
     error: null,
     ...overrides,
@@ -136,24 +135,13 @@ describe("renderProfilePage — completion banner", () => {
     expect(dom.querySelector('[role="alert"]')).toBeNull();
   });
 
-  it("hides the banner when the user has dismissed it", () => {
-    const dom = render(
-      buildState({
-        profile: { first_name: null, last_name: null },
-        profileBannerDismissed: true,
-      }),
-    );
-    expect(dom.querySelector('[role="alert"]')).toBeNull();
-  });
-
-  it("shows the banner when the profile is incomplete and not dismissed", () => {
+  it("shows the banner when the profile is incomplete", () => {
     const dom = render(
       buildState({ profile: { first_name: null, last_name: null } }),
     );
     const banner = dom.querySelector('[role="alert"]');
     expect(banner).not.toBeNull();
     expect(banner.textContent).toMatch(/profile is missing/i);
-    expect(banner.querySelector("#profileBannerDismiss")).not.toBeNull();
     expect(banner.querySelector("#profileBannerComplete")).not.toBeNull();
   });
 });

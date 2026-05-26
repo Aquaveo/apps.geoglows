@@ -200,22 +200,6 @@ describe("bindWorkspaceEvents — profile-edit submit", () => {
     );
   });
 
-  it("does NOT reset profileBannerDismissed after a successful save (MAINT-001)", async () => {
-    updateProfile.mockResolvedValue({});
-    loadAccountSummary.mockResolvedValue({ profile: {} });
-
-    buildForm();
-    const setState = vi.fn();
-    bindWorkspaceEvents(setState);
-
-    submitForm();
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-
-    const successPatch = setState.mock.calls.at(-1)[0];
-    expect(successPatch).not.toHaveProperty("profileBannerDismissed");
-  });
-
   it("converts blank optional fields to null in the updateProfile payload", async () => {
     updateProfile.mockResolvedValue({});
     loadAccountSummary.mockResolvedValue({ profile: {} });

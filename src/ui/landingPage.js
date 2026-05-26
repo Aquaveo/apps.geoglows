@@ -137,8 +137,8 @@ function renderRecentApps() {
     .map(createAppCard);
   if (!recentCards.length) return "";
   return `
-    <section class="mb-10">
-      <h2 class="font-display text-2xl text-slate-800 dark:text-white mb-4">Recent Apps</h2>
+    <section class="mb-12">
+      <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-600 mb-4">Recent</p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         ${recentCards.join("")}
       </div>

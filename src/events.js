@@ -25,13 +25,7 @@ export function bindWorkspaceEvents(setState) {
     }
   });
 
-  // Profile page — completion banner handlers
-  document
-    .getElementById("profileBannerDismiss")
-    ?.addEventListener("click", () => {
-      setState({ profileBannerDismissed: true });
-    });
-
+  // Profile page — completion banner handler
   document
     .getElementById("profileBannerComplete")
     ?.addEventListener("click", () => {

@@ -34,7 +34,6 @@ function field(label, value, opts = {}) {
 function renderCompletionBanner(state) {
   const { account } = state;
   const profile = account?.profile;
-  if (state.profileBannerDismissed) return "";
   if (isProfileComplete(profile)) return "";
 
   return `
@@ -43,10 +42,6 @@ function renderCompletionBanner(state) {
       <div class="flex-1 min-w-[200px] text-sm text-amber-900 dark:text-amber-200">
         Your profile is missing your name. Complete it so we can address you correctly.
       </div>
-      <button type="button" id="profileBannerDismiss"
-        class="px-3 py-1.5 min-h-[44px] rounded-lg text-sm font-medium text-amber-900 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
-        Dismiss
-      </button>
       <button type="button" id="profileBannerComplete"
         class="px-3 py-1.5 min-h-[44px] rounded-lg text-sm font-semibold bg-amber-600 hover:bg-amber-700 text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2">
         Complete profile

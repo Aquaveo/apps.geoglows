@@ -1,7 +1,3 @@
-import config from "../../apps.json";
-
-const { contributors: CONTRIBUTORS, sponsors: SPONSORS } = config;
-
 export function renderFooter() {
   return `
     <footer class="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10 pb-8 px-4 bg-white/50 dark:bg-transparent">

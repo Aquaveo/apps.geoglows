@@ -363,18 +363,22 @@ export function initScrollAnimations() {
   const sections = document.querySelectorAll(".scroll-section");
   if (!sections.length) return;
 
+  const allReveals = document.querySelectorAll(".scroll-reveal");
+
   activeScope = createScope({
     mediaQueries: {
       reduceMotion: "(prefers-reduced-motion: reduce)",
     },
   }).add((self) => {
     if (self.matches.reduceMotion) {
-      for (const el of document.querySelectorAll(".scroll-reveal")) {
+      for (const el of allReveals) {
         el.style.opacity = "1";
         el.style.transform = "none";
       }
       return;
     }
+
+    for (const el of allReveals) el.classList.add("anim-ready");
 
     for (const section of sections) {
       const reveals = section.querySelectorAll(".scroll-reveal");

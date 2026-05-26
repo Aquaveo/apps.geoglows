@@ -167,11 +167,11 @@ body {
   }
 }
 
-.scroll-reveal {
+.scroll-reveal.anim-ready {
   opacity: 0;
 }
 
-.scroll-reveal[data-anim="cascade"] > * {
+.scroll-reveal.anim-ready[data-anim="cascade"] > * {
   opacity: 0;
 }
 
@@ -182,7 +182,9 @@ body {
   }
 
   .scroll-reveal,
-  .scroll-reveal[data-anim="cascade"] > * {
+  .scroll-reveal.anim-ready,
+  .scroll-reveal[data-anim="cascade"] > *,
+  .scroll-reveal.anim-ready[data-anim="cascade"] > * {
     opacity: 1;
     transform: none;
   }

@@ -318,6 +318,7 @@ async function initApp() {
       return;
     }
     if (event === "SIGNED_OUT") {
+      window.location.hash = "#home";
       bootstrapSafe("SIGNED_OUT");
       return;
     }

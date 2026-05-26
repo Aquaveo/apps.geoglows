@@ -33,7 +33,8 @@ function field(label, value, opts = {}) {
 
 function renderCompletionBanner(state) {
   const { account } = state;
-  const profile = account?.profile;
+  if (!account) return "";
+  const profile = account.profile;
   if (isProfileComplete(profile)) return "";
 
   return `

@@ -130,13 +130,46 @@ docs/
 
 ## Sub-app integration
 
-Sub-apps are proxied through Vercel rewrites so they share the portal's origin (enabling SSO via shared Supabase cookies). Each app needs three rewrite rules in `vercel.json` and an entry in `apps.json`.
+Sub-apps are separate Vercel projects that get proxied through the portal using [Vercel rewrites](https://vercel.com/docs/edge-network/rewrites). This makes them appear under `apps.geoglows.org/hydroviewer`, `apps.geoglows.org/grace-groundwater`, etc., even though each app is deployed independently.
 
-| App | Portal path | Repo |
-|-----|-------------|------|
-| Hydroviewer RFS v2 | `/hydroviewer` | rfs-v2-hydroviewer |
-| GRACE Groundwater | `/grace-groundwater` | grace-groundwater-dashboard |
-| Aquifer Analyst | `/aquifer-analyst` | aquiferx |
+### Why rewrites?
+
+All apps share the same origin (`apps.geoglows.org`), which means:
+- **SSO works automatically.** Supabase Auth stores its session token in `localStorage` scoped to the origin. Since the portal and all sub-apps share the same origin, a user who signs in on the portal is already signed in on every sub-app.
+- **No CORS issues.** API calls from sub-apps to Supabase go through the same origin.
+- **Clean URLs.** Users see `apps.geoglows.org/hydroviewer` instead of `rfs-v2-hydroviewer.vercel.app`.
+
+### How it works
+
+Each sub-app needs three rewrite rules in `vercel.json` (bare path, trailing slash, and wildcard for assets/routes):
+
+```json
+{
+  "rewrites": [
+    { "source": "/hydroviewer", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
+    { "source": "/hydroviewer/", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
+    { "source": "/hydroviewer/:path+", "destination": "https://rfs-v2-hydroviewer.vercel.app/:path+" }
+  ]
+}
+```
+
+The sub-app's Vite config must set `base` to the portal path so asset URLs resolve correctly. For example, the GRACE app sets `VITE_BASE_PATH=/grace-groundwater/` on Vercel Production, which makes its built assets load from `/grace-groundwater/assets/...` instead of `/assets/...`.
+
+### Adding a new sub-app
+
+1. Deploy the sub-app as its own Vercel project (it gets a `.vercel.app` URL)
+2. Add three rewrite rules to `vercel.json` in this repo
+3. Add the app entry to `apps.json` (name, description, path, icon, tags)
+4. Set `VITE_BASE_PATH=/<portal-path>/` on the sub-app's Vercel Production environment
+5. Push both repos; the portal redeploy picks up the new rewrites
+
+### Current sub-apps
+
+| App | Portal path | Vercel project | Repo |
+|-----|-------------|----------------|------|
+| Hydroviewer RFS v2 | `/hydroviewer` | rfs-v2-hydroviewer | rfs-v2-hydroviewer |
+| GRACE Groundwater | `/grace-groundwater` | grace-groundwater-dashboard | grace-groundwater-dashboard |
+| Aquifer Analyst | `/aquifer-analyst` | aquiferx | aquiferx |
 
 ## Deployment
 

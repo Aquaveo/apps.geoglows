@@ -40,6 +40,49 @@ cp .env.example .env.local
 | `VITE_SUPABASE_URL` | Supabase project URL (Settings > API) |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key |
 
+### Local Supabase (optional)
+
+For local development with a full Supabase stack (auth, database, RLS policies), use the Supabase CLI with Docker:
+
+```bash
+# Install the CLI (if not already)
+npm install -g supabase
+
+# Start the local Supabase stack (requires Docker)
+supabase start
+```
+
+This spins up Postgres, Auth, Storage, and the API gateway in Docker containers. On first run it applies all migrations from `supabase/migrations/`. The CLI prints local credentials on startup:
+
+```
+API URL:   http://127.0.0.1:54321
+anon key:  eyJ...
+DB URL:    postgresql://postgres:postgres@127.0.0.1:54322/postgres
+Studio:    http://127.0.0.1:54323
+```
+
+Point your `.env.local` at the local instance:
+
+```env
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_PUBLISHABLE_KEY=<anon key from supabase start output>
+```
+
+Common commands:
+
+```bash
+supabase start              # start all services
+supabase stop               # stop and keep data
+supabase stop --no-backup   # stop and reset data
+supabase db reset           # re-run all migrations from scratch
+supabase migration new <name>  # create a new migration file
+supabase db diff --schema core # generate migration from schema changes
+```
+
+Migrations live in `supabase/migrations/` and run in filename order. The `core` schema holds the `profiles` table and RLS policies. See `supabase/config.toml` for the full local configuration.
+
+Studio (local dashboard) is available at `http://127.0.0.1:54323` for inspecting data, testing queries, and managing auth users.
+
 ### Run
 
 ```bash

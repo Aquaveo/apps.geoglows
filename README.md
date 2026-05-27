@@ -101,6 +101,45 @@ Push to `main` triggers Vercel production deployment automatically. Preview depl
 
 Environment variables must be set per-environment on Vercel (Production + Preview + Development). Setting only Production silently breaks preview deploys.
 
+## AI-assisted development
+
+This project uses [Claude Code](https://claude.ai/claude-code) for development. AI configuration files are organized under dotfiles to keep the project root clean.
+
+```
+.claude/
+  CLAUDE.md              Project instructions (loaded automatically each session)
+  commands/              Slash commands (e.g. /screenshots)
+.agents/
+  context/
+    PRODUCT.md           Product context, users, brand, design principles
+    DESIGN.md            Design system tokens, typography, color, components
+```
+
+### Slash commands
+
+| Command | Description |
+|---------|-------------|
+| `/screenshots` | Run cross-browser Playwright screenshot matrix (local build) |
+| `/screenshots live` | Same matrix against production |
+
+### Plugins used
+
+| Plugin | Purpose |
+|--------|---------|
+| [compound-engineering](https://github.com/nicholasgriffintn/compound-engineering) | `/ce:plan`, `/ce:debug`, `/ce:compound` for planning, debugging, and documenting solutions |
+| [impeccable](https://github.com/claudeai/impeccable) | `/impeccable polish`, `/impeccable critique` for design review and UI polish |
+
+### Documented knowledge
+
+Past solutions are captured in `docs/solutions/` with YAML frontmatter for searchability. Grep here before reinventing a pattern that was already solved:
+
+```bash
+grep -r "tags:.*safari" docs/solutions/
+grep -r "module:.*apps.geoglows" docs/solutions/
+```
+
+Engineering plans live in `docs/plans/`. Sub-app design proposals are in `docs/designs/`.
+
 ## License
 
 See [geoglows.org](https://www.geoglows.org) for terms.

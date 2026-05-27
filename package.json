@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "screenshots": "docker run --rm -v /tmp/pw-screenshots:/tmp/screenshots -v $(pwd)/dist:/dist:ro -v $(pwd)/scripts:/scripts:ro -w /work mcr.microsoft.com/playwright:v1.52.0-noble bash -c 'npm init -y >/dev/null 2>&1 && npm i playwright@1.52.0 >/dev/null 2>&1 && cp /scripts/playwright-screenshots.js . && node playwright-screenshots.js'",
+    "screenshots:live": "docker run --rm --network host -v /tmp/pw-screenshots:/tmp/screenshots -v $(pwd)/scripts:/scripts:ro -w /work -e TARGET_URL=https://apps.geoglows.org/ mcr.microsoft.com/playwright:v1.52.0-noble bash -c 'npm init -y >/dev/null 2>&1 && npm i playwright@1.52.0 >/dev/null 2>&1 && cp /scripts/playwright-screenshots.js . && node playwright-screenshots.js'"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -20,6 +22,7 @@
     "@aquaveo/geoglows-auth": "^1.6.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "animejs": "^4.4.1"
+    "animejs": "^4.4.1",
+    "npx": "^10.2.2"
   }
 }

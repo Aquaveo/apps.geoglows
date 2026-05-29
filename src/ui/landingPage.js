@@ -210,7 +210,7 @@ export function renderLandingPage() {
       <div class="max-w-5xl mx-auto">
         <div class="scroll-reveal mb-8" data-anim="slide" data-anim-dir="left">
           <h2 class="font-display text-3xl text-slate-800 dark:text-white mb-2">
-            Explore the tools
+            Explore
           </h2>
           <p class="text-slate-600 dark:text-slate-400 max-w-xl">
             Choose a tool and begin exploring. Create an account for personalized features.

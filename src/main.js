@@ -122,7 +122,7 @@ function render(state) {
               <span class="hero-heading">Global Water Intelligence</span>
             </h1>
             <p class="text-base text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
-              Empowering individuals and organizations to solve local water challenges with global water intelligence through open data, forecasting, and research.
+              Enabling individuals and organizations to solve local water challenges with global water intelligence.
             </p>
           ` : ""}
         </div>

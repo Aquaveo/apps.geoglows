@@ -15,7 +15,7 @@ export function renderFooter() {
             class="w-72 mb-4 hidden dark:block opacity-80"
           />
           <p class="text-slate-600 dark:text-slate-400 text-sm max-w-lg leading-relaxed mb-5">
-            Empowering individuals and organizations to solve local water challenges with global water intelligence through open data, forecasting, and research.
+            Enabling individuals and organizations to solve local water challenges with global water intelligence through open data, forecasting, and research.
           </p>
           <div class="flex flex-wrap justify-center gap-3">
             <a href="https://www.geoglows.org" target="_blank" rel="noopener noreferrer"

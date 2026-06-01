@@ -121,12 +121,7 @@ describe("renderProfilePage — view mode (signed in)", () => {
     expect(matches.length).toBeGreaterThanOrEqual(2);
   });
 
-  it('shows the empty placeholder "—" for optional fields when blank', () => {
-    const dom = render(
-      buildState({ profile: { phone_number: null, address: null } }),
-    );
-    expect(dom.innerHTML).toContain("—");
-  });
+
 });
 
 describe("renderProfilePage — completion banner", () => {
@@ -155,9 +150,7 @@ describe("renderProfilePage — edit mode", () => {
           first_name: "Ada",
           middle_name: "Augusta",
           last_name: "Lovelace",
-          phone_number: "+44 20 7946 0000",
           user_type: "researcher",
-          address: "London",
           user_link: "https://example.com",
         },
       }),
@@ -169,12 +162,8 @@ describe("renderProfilePage — edit mode", () => {
     expect(dom.querySelector('input[name="last_name"]').value).toBe(
       "Lovelace",
     );
-    expect(dom.querySelector('input[name="phone_number"]').value).toBe(
-      "+44 20 7946 0000",
-    );
     const userTypeSelect = dom.querySelector('select[name="user_type"]');
     expect(userTypeSelect.value).toBe("researcher");
-    expect(dom.querySelector('textarea[name="address"]').value).toBe("London");
     expect(dom.querySelector('input[name="user_link"]').value).toBe(
       "https://example.com",
     );

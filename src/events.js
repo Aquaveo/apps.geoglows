@@ -51,9 +51,7 @@ export function bindWorkspaceEvents(setState) {
       const firstName = form.elements.first_name.value.trim();
       const lastName = form.elements.last_name.value.trim();
       const middleName = form.elements.middle_name.value.trim();
-      const phoneNumber = form.elements.phone_number.value.trim();
       const userType = form.elements.user_type.value;
-      const address = form.elements.address.value.trim();
       const userLink = form.elements.user_link.value.trim();
 
       if (!firstName) {
@@ -77,9 +75,7 @@ export function bindWorkspaceEvents(setState) {
           first_name: firstName,
           middle_name: middleName || null,
           last_name: lastName,
-          phone_number: phoneNumber || null,
           user_type: userType || null,
-          address: address || null,
           user_link: userLink || null,
         });
         const account = await loadAccountSummary();

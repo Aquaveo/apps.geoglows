@@ -35,9 +35,7 @@ function buildForm({
   first_name = "Ada",
   last_name = "Lovelace",
   middle_name = "",
-  phone_number = "",
   user_type = "researcher",
-  address = "",
   user_link = "",
 } = {}) {
   document.body.innerHTML = `
@@ -45,12 +43,10 @@ function buildForm({
       <input name="first_name" value="${first_name}" />
       <input name="middle_name" value="${middle_name}" />
       <input name="last_name" value="${last_name}" />
-      <input name="phone_number" value="${phone_number}" />
       <select name="user_type">
         <option value="">none</option>
         <option value="researcher" ${user_type === "researcher" ? "selected" : ""}>researcher</option>
       </select>
-      <textarea name="address">${address}</textarea>
       <input name="user_link" value="${user_link}" />
     </form>
   `;
@@ -159,9 +155,7 @@ describe("bindWorkspaceEvents — profile-edit submit", () => {
       first_name: "Ada",
       middle_name: "Augusta",
       last_name: "Lovelace",
-      phone_number: "+1-555",
       user_type: "researcher",
-      address: "London",
       user_link: "https://example.com",
     });
     const setState = vi.fn();
@@ -177,9 +171,7 @@ describe("bindWorkspaceEvents — profile-edit submit", () => {
       first_name: "Ada",
       middle_name: "Augusta",
       last_name: "Lovelace",
-      phone_number: "+1-555",
       user_type: "researcher",
-      address: "London",
       user_link: "https://example.com",
     });
 
@@ -208,9 +200,7 @@ describe("bindWorkspaceEvents — profile-edit submit", () => {
       first_name: "Ada",
       last_name: "Lovelace",
       middle_name: "",
-      phone_number: "",
       user_type: "",
-      address: "",
       user_link: "",
     });
     const setState = vi.fn();
@@ -224,9 +214,7 @@ describe("bindWorkspaceEvents — profile-edit submit", () => {
       first_name: "Ada",
       middle_name: null,
       last_name: "Lovelace",
-      phone_number: null,
       user_type: null,
-      address: null,
       user_link: null,
     });
   });

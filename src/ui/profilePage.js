@@ -90,14 +90,10 @@ function renderViewMode(state) {
         ${field("First name", profile?.first_name)}
         ${field("Middle name", profile?.middle_name, { empty: "—" })}
         ${field("Last name", profile?.last_name)}
-        ${field("Phone number", profile?.phone_number, { empty: "—" })}
         ${field("User type", userTypeLabel, { empty: "—" })}
         ${userLinkRow}
       </div>
 
-      <div class="mt-5">
-        ${field("Address", profile?.address, { empty: "—" })}
-      </div>
     </div>
   `;
 }
@@ -169,12 +165,6 @@ function renderEditMode(state) {
             ${userTypeOptionsHtml}
           </select>
         </div>
-      </div>
-
-      <div>
-        <label for="profileAddress" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Address</label>
-        <textarea id="profileAddress" name="address" autocomplete="street-address" placeholder="City, Country" ${pending ? "disabled" : ""}
-          class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[60px] resize-y">${escape(profile.address ?? "")}</textarea>
       </div>
 
       <div>

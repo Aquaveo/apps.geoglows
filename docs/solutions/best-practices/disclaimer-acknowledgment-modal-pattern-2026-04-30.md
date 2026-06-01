@@ -1,6 +1,7 @@
 ---
 title: First-visit disclaimer acknowledgment modal — pattern, version-bumping, recovery decoupling
 date: 2026-04-30
+last_updated: 2026-05-02
 category: best-practices
 module: apps.geoglows
 problem_type: best_practice
@@ -101,6 +102,11 @@ const isRecoveryFlow = recoveryUrl.kind !== "none" || hasImplicitRecoveryHash;
 if (appState.disclaimerStatus === "pending" && !isRecoveryFlow) {
   openDisclaimerNow();
 }
+```
+
+> **Caveat (2026-05-02):** module-load synchronous detection is not always sufficient. In React/heavy-bundler consumers (and in some Vite production builds even for vanilla apps), Supabase JS's `_initialize()` can run before the call site here, leaving `window.location.hash` already cleared. The portal apps now also capture the URL via an inline `<script>` in `index.html` exposing `window.__GEOGLOWS_INITIAL_URL__`, and the detection above reads from that snapshot first (with `window.location` as fallback). See `docs/solutions/logic-errors/recovery-email-silent-signin-modal-not-shown-2026-05-02.md`.
+
+```javascript
 
 // Listen on the lib's sign-in modal closing (recovery modal lives there);
 // open the disclaimer afterward if still pending.

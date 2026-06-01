@@ -10,5 +10,10 @@
     { "source": "/hydroviewer", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
     { "source": "/hydroviewer/", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
     { "source": "/hydroviewer/:path+", "destination": "https://rfs-v2-hydroviewer.vercel.app/:path+" }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
 }

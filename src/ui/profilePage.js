@@ -152,12 +152,6 @@ function renderEditMode(state) {
 
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
-          <label for="profilePhone" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Phone number</label>
-          <input id="profilePhone" name="phone_number" type="tel" autocomplete="tel" placeholder="+1 555 0100" ${pending ? "disabled" : ""}
-            value="${escape(profile.phone_number ?? "")}"
-            class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-        <div>
           <label for="profileUserType" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">User type</label>
           <select id="profileUserType" name="user_type" ${pending ? "disabled" : ""}
             class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">

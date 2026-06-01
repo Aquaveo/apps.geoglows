@@ -165,7 +165,7 @@ export function renderAppsGrid() {
   `;
 }
 
-export function renderLandingPage() {
+export function renderLandingPage_old() {
   return `
     <div class="ticker-ribbon -mx-6 overflow-hidden bg-slate-800 dark:bg-slate-950 py-2 mb-8" aria-hidden="true">
       <div class="ticker-track flex gap-12 whitespace-nowrap text-xs font-mono tracking-wider text-slate-400">
@@ -187,7 +187,7 @@ export function renderLandingPage() {
         <span>DATA BACK TO 1940</span>
       </div>
     </div>
-
+    
     <section class="scroll-section -mx-6 py-0">
       <div class="scroll-reveal relative overflow-hidden rounded-2xl" data-anim="scale">
         <img src="/showcase/hero-river-network.png"
@@ -221,7 +221,7 @@ export function renderLandingPage() {
         </div>
       </div>
     </section>
-
+    
     <section class="scroll-section py-12 md:py-24">
       <div class="scroll-reveal max-w-4xl mx-auto text-center px-6" data-anim="scale">
         <p class="font-display text-2xl md:text-5xl text-slate-800 dark:text-white leading-tight">
@@ -269,6 +269,36 @@ export function renderLandingPage() {
     </section>
   `;
 }
+
+export function renderLandingPage(){
+  return `
+    <section class="scroll-section py-12 md:py-24">
+      <div class="scroll-reveal max-w-4xl mx-auto text-center px-6" data-anim="scale">
+        <p class="font-display text-2xl md:text-5xl text-slate-800 dark:text-white leading-tight">
+          Don't just monitor water.
+        </p>
+        <p class="font-display text-2xl md:text-5xl text-blue-600 dark:text-blue-400 leading-tight">
+          Understand it.
+        </p>
+      </div>
+    </section>
+    <section class="scroll-section px-6 py-12">
+      <div class="max-w-5xl mx-auto">
+        <div class="scroll-reveal mb-8" data-anim="slide" data-anim-dir="left">
+          <h2 class="font-display text-3xl text-slate-800 dark:text-white mb-2">
+            Explore
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 max-w-xl">
+            Choose a tool and begin exploring. Create an account for personalized features.
+          </p>
+        </div>
+        <div class="scroll-reveal grid grid-cols-1 md:grid-cols-2 gap-6" data-anim="cascade">
+          ${visibleApps.map(createAppCard).join("")}
+        </div>
+      </div>
+    `;
+}
+
 
 function buildAnimations(el) {
   const anim = el.dataset.anim;

@@ -2,6 +2,14 @@
 
 All notable changes to the GEOGLOWS Portal (apps.geoglows) are documented here.
 
+## 2026-06-01
+
+### Changed
+- Supabase schema and migrations moved to a dedicated repo (`geoglows-water-intelligence-portal-db`)
+
+### Removed
+- `phone_number` and `address` fields from `core.profiles` and the profile form (simpler profile shape)
+
 ## 2026-05-27
 
 ### Added

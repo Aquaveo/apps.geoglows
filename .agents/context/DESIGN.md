@@ -200,7 +200,7 @@ Native `<dialog>` element. Fixed center positioning with explicit translate (UA 
 Theme-aware GEOGLOWS logo (color for light, white for dark) at w-72. Tagline, pill-style external links (geoglows.org, Training). Contributors and sponsors as plain text. Copyright line with top border separator. Spacing: mt-16 pt-10 pb-8.
 
 ### Profile Page
-Save success banner: emerald-50 background with emerald-700 text, auto-dismisses after 3 seconds. Completion banner: amber accent matching the Coming Soon treatment. View mode: Playfair Display name heading, 2-column field grid. Edit mode: labeled inputs with placeholder hints (phone, address), Inter semibold field labels in uppercase.
+Save success banner: emerald-50 background with emerald-700 text, auto-dismisses after 3 seconds. Completion banner: amber accent matching the Coming Soon treatment. View mode: Playfair Display name heading, 2-column field grid. Edit mode: labeled inputs (name parts, user type, personal link), Inter semibold field labels in uppercase.
 
 ### Disclaimer Modal
 "Before you begin" heading in Playfair Display. GEOGLOWS branding (droplet + wordmark). Four grouped legal sections with h3 subheadings. Custom scrollbar styling. Branded shell (water-mesh gradient at 30% opacity) visible behind the modal.

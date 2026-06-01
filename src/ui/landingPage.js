@@ -272,17 +272,7 @@ export function renderLandingPage_old() {
 
 export function renderLandingPage(){
   return `
-    <section class="scroll-section py-12 md:py-24">
-      <div class="scroll-reveal max-w-4xl mx-auto text-center px-6" data-anim="scale">
-        <p class="font-display text-2xl md:text-5xl text-slate-800 dark:text-white leading-tight">
-          Don't just monitor water.
-        </p>
-        <p class="font-display text-2xl md:text-5xl text-blue-600 dark:text-blue-400 leading-tight">
-          Understand it.
-        </p>
-      </div>
-    </section>
-    <section class="scroll-section px-6 py-12">
+   <section class="scroll-section px-6 py-12">
       <div class="max-w-5xl mx-auto">
         <div class="scroll-reveal mb-8" data-anim="slide" data-anim-dir="left">
           <h2 class="font-display text-3xl text-slate-800 dark:text-white mb-2">
@@ -296,6 +286,18 @@ export function renderLandingPage(){
           ${visibleApps.map(createAppCard).join("")}
         </div>
       </div>
+    </section>
+    <section class="scroll-section py-12 md:py-24">
+      <div class="scroll-reveal max-w-4xl mx-auto text-center px-6" data-anim="scale">
+        <p class="font-display text-2xl md:text-5xl text-slate-800 dark:text-white leading-tight">
+          Don't just monitor water.
+        </p>
+        <p class="font-display text-2xl md:text-5xl text-blue-600 dark:text-blue-400 leading-tight">
+          Understand it.
+        </p>
+      </div>
+    </section>
+
     `;
 }
 

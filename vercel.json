@@ -1,0 +1,19 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/grace-groundwater", "destination": "https://grace-groundwater-dashboard.vercel.app/" },
+    { "source": "/grace-groundwater/", "destination": "https://grace-groundwater-dashboard.vercel.app/" },
+    { "source": "/grace-groundwater/:path+", "destination": "https://grace-groundwater-dashboard.vercel.app/:path+" },
+    { "source": "/hydroviewer", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
+    { "source": "/hydroviewer/", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
+    { "source": "/hydroviewer/:path+", "destination": "https://rfs-v2-hydroviewer.vercel.app/:path+" }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
+}

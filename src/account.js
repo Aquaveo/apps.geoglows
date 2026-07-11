@@ -2,7 +2,7 @@ import {
   loadAccountSummary as loadGeoglowsAccountSummary,
   updateProfile as updateGeoglowsProfile,
   isProfileComplete as isGeoglowsProfileComplete,
-} from "@aquaveo/geoglows-auth/core";
+} from "@geoglows/geoglows-auth/core";
 import { supabase } from "./supabase.js";
 import { getCurrentUser } from "./auth.js";
 

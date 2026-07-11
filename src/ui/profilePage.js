@@ -1,4 +1,4 @@
-import { escapeHtml as escape, sanitizeHref, getUserDisplayInfo } from "@aquaveo/geoglows-auth/core";
+import { escapeHtml as escape, sanitizeHref, getUserDisplayInfo } from "@geoglows/geoglows-auth/core";
 import { ICONS } from "../icons.js";
 import { isProfileComplete } from "../account.js";
 

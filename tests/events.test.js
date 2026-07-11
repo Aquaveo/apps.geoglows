@@ -70,7 +70,7 @@ afterEach(() => {
 });
 
 describe("bindWorkspaceEvents — auth navbar buttons (namespaced IDs)", () => {
-  // The navbar IDs are owned by @aquaveo/geoglows-auth's renderAuthAction:
+  // The navbar IDs are owned by @geoglows/geoglows-auth's renderAuthAction:
   // #geoglowsSignIn (signed-out) and #geoglowsSignOut (signed-in dropdown).
   // events.js must bind those exact IDs so that clicking the navbar fires
   // signInRedirect / signOutRedirect — the bridge SIGN_IN_REQUESTED_EVENT

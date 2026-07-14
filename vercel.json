@@ -4,12 +4,12 @@
   "framework": null,
   "installCommand": "npm install",
   "rewrites": [
-    { "source": "/grace-groundwater", "destination": "https://grace-groundwater-dashboard.vercel.app/" },
-    { "source": "/grace-groundwater/", "destination": "https://grace-groundwater-dashboard.vercel.app/" },
-    { "source": "/grace-groundwater/:path+", "destination": "https://grace-groundwater-dashboard.vercel.app/:path+" },
-    { "source": "/hydroviewer", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
-    { "source": "/hydroviewer/", "destination": "https://rfs-v2-hydroviewer.vercel.app/" },
-    { "source": "/hydroviewer/:path+", "destination": "https://rfs-v2-hydroviewer.vercel.app/:path+" }
+    { "source": "/grace-groundwater", "destination": "https://grace-staging.geoglows.org/" },
+    { "source": "/grace-groundwater/", "destination": "https://grace-staging.geoglows.org/" },
+    { "source": "/grace-groundwater/:path+", "destination": "https://grace-staging.geoglows.org/:path+" },
+    { "source": "/hydroviewer", "destination": "https://hydroviewer-staging.geoglows.org/" },
+    { "source": "/hydroviewer/", "destination": "https://hydroviewer-staging.geoglows.org/" },
+    { "source": "/hydroviewer/:path+", "destination": "https://hydroviewer-staging.geoglows.org/:path+" }
   ],
   "git": {
     "deploymentEnabled": {

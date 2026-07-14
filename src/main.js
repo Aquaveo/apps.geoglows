@@ -1,10 +1,10 @@
 import "./style.css";
-import "@aquaveo/geoglows-auth/core/sign-in.css";
+import "@geoglows/geoglows-auth/core/sign-in.css";
 import {
   bootstrapSession,
   mountSignInModal,
   renderAuthAction,
-} from "@aquaveo/geoglows-auth/core";
+} from "@geoglows/geoglows-auth/core";
 import { inject } from "@vercel/analytics";
 import { injectSpeedInsights } from "@vercel/speed-insights";
 
@@ -251,7 +251,7 @@ async function initApp() {
   // password-flow-plan.md (Q1 + PKCE detector).
   if (recoveryUrl.kind === "pkce-unsupported") {
     console.error(
-      "PKCE recovery flow is not supported in @aquaveo/geoglows-auth 1.2.x. " +
+      "PKCE recovery flow is not supported in @geoglows/geoglows-auth 1.2.x. " +
         "If your Supabase project has been migrated to PKCE, the recovery " +
         "URL template needs to use the implicit flow.",
     );

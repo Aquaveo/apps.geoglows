@@ -1,10 +1,10 @@
 // src/auth.js
 //
 // Supabase Auth adapter (replaces the prior Cognito/OIDC adapter as of v0.2.0
-// of @aquaveo/geoglows-auth). The Supabase client is shared with the data
+// of @geoglows/geoglows-auth). The Supabase client is shared with the data
 // layer in src/supabase.js — same client serves both auth and queries.
 
-import { createSupabaseAuthAdapter } from "@aquaveo/geoglows-auth/core";
+import { createSupabaseAuthAdapter } from "@geoglows/geoglows-auth/core";
 import { supabase } from "./supabase.js";
 
 // Preserve pathname so password-recovery / magic-link emails return

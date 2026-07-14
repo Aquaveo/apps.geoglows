@@ -1,6 +1,6 @@
 // src/supabase.js
 
-import { createGeoglowsSupabaseClient } from "@aquaveo/geoglows-auth/core";
+import { createGeoglowsSupabaseClient } from "@geoglows/geoglows-auth/core";
 
 // Single Supabase client serves both as the data layer and (via auth.js)
 // as the identity provider. No external `auth` adapter is passed here —

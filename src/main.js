@@ -45,7 +45,7 @@ const appState = {
   profileEditing: false,
   profileBannerDismissed: false,
   profileSaveSuccess: false,
-  // 'pending' | 'accepted' — see src/disclaimer.js. Informative
+  // 'pending' | 'accepted' - see src/disclaimer.js. Informative
   // notice; no rejection path (deferred to a future plan).
   disclaimerStatus: getDisclaimerStatus(),
 };
@@ -158,7 +158,7 @@ async function runBootstrap() {
     // initialState carries the previous user/account through the
     // transient bootstrapping/loading_profile/loading_account phases on
     // rebootstrap (e.g. tab-focus revalidation), avoiding the avatar →
-    // "Signing in…" flicker. Returns null on first bootstrap when
+    // "Signing in..." flicker. Returns null on first bootstrap when
     // appState.user is null, which is the desired default behavior.
     initialState: getInitialState(appState),
     onStateChange: setState,
@@ -173,7 +173,7 @@ async function initApp() {
   //
   // Read URL via the inline-script-captured snapshot from index.html
   // (window.__GEOGLOWS_INITIAL_URL__). Reading window.location directly
-  // here can race against Supabase JS's _initialize() — by the time
+  // here can race against Supabase JS's _initialize() - by the time
   // initApp runs, the hash may already be cleared. The inline script in
   // index.html runs before any module is fetched, guaranteeing the
   // recovery hash is preserved here. See aquiferx 2026-05-01 race fix.
@@ -237,14 +237,14 @@ async function initApp() {
   });
 
   // Mount the lib's vanilla sign-in modal and bridge our window-event
-  // dispatch (SIGN_IN_REQUESTED_EVENT — fired by signInRedirect() in
+  // dispatch (SIGN_IN_REQUESTED_EVENT - fired by signInRedirect() in
   // src/auth.js when the navbar's "Sign in" button is clicked) to the
   // modal's open() handle. This decouples any UI surface that wants to
   // request sign-in from a direct reference to the modal.
   const signInModal = mountSignInModal({ authAdapter: auth });
   window.addEventListener(SIGN_IN_REQUESTED_EVENT, () => signInModal.open());
 
-  // Recovery URL detection — runs synchronously BEFORE Supabase JS consumes
+  // Recovery URL detection - runs synchronously BEFORE Supabase JS consumes
   // the hash. If the URL signals expired-token or PKCE (unsupported in v1),
   // open the modal in the recoveryError view so the user sees a clean error
   // instead of silent failure. See docs/plans/2026-04-30-002-feat-forgot-
@@ -278,7 +278,7 @@ async function initApp() {
   });
 
   // Bootstrap is driven by Supabase's onAuthStateChange. INITIAL_SESSION
-  // fires after Supabase JS finishes detectSessionInUrl — this is the only
+  // fires after Supabase JS finishes detectSessionInUrl - this is the only
   // safe moment to call getSession() and have it reflect any OAuth tokens
   // that arrived in the URL hash. SIGNED_IN / SIGNED_OUT fire on later
   // changes (inline modal sign-in, sign-out from anywhere).
@@ -325,7 +325,7 @@ async function initApp() {
     if (event === "SIGNED_IN") {
       // Supabase JS fires SIGNED_IN on every visibility-change session
       // revalidation (GoTrueClient.js _recoverAndRefresh). If it's the
-      // same user we already have, skip the rebootstrap — saves a
+      // same user we already have, skip the rebootstrap - saves a
       // network round trip and (defensively) avoids the avatar
       // flicker. See `src/auth-events.js`.
       if (isRedundantSignIn(event, session, appState.user)) return;
@@ -334,7 +334,7 @@ async function initApp() {
     if (event === "PASSWORD_RECOVERY") {
       // Only open the recovery modal if THIS tab actually loaded with
       // a recovery URL. Supabase fires PASSWORD_RECOVERY on every tab
-      // that revalidates a recovery-type session via getSession() —
+      // that revalidates a recovery-type session via getSession() -
       // including tabs that did NOT receive the recovery email link
       // (e.g., the user clicked the link in another tab while
       // apps.geoglows was already open elsewhere). Without this gate

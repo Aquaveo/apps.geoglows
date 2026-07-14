@@ -6,3 +6,6 @@ dist/
 .vercel
 .context/
 .impeccable/
+.agents/
+.claude/
+docs
